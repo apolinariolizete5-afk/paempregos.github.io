@@ -8,100 +8,78 @@
     <style>
         body { font-family: sans-serif; padding: 20px; background: #f4f7f6; color: #333; }
         .admin-container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Dashboard Stats */
+        .dashboard-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: #0b5ed7; color: white; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-card h2 { margin: 0; font-size: 20px; }
+        .stat-card p { margin: 5px 0 0; font-size: 12px; opacity: 0.9; }
+
         h2, h3 { color: #0b5ed7; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        input[type="file"] { padding: 10px; background: #f8f9fa; cursor: pointer; }
-        button { width: 100%; padding: 14px; background: #0b5ed7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #094ab0; }
-        button:disabled { background: #cccccc; cursor: not-allowed; }
+        button { width: 100%; padding: 14px; background: #0b5ed7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
         
-        .status-caixa { margin: 15px 0; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; text-align: center; }
-        .status-processando { background: #e6f0ff; color: #0b5ed7; border: 1px solid #b3d4ff; }
-        .status-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; text-align: left; white-space: pre-wrap; }
-        .status-sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-
+        .btn-limpar { display: none; background: #dc3545; padding: 8px; margin-top: 5px; border-radius: 6px; font-size: 13px; color: white; cursor: pointer; border: none; }
+        .status-caixa { margin: 15px 0; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
         .vaga-item { background: #f8f9fa; padding: 15px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border-left: 4px solid #0b5ed7; }
-        .vaga-item span { font-weight: 500; font-size: 14px; }
-        .vaga-info-views { display: inline-block; margin-left: 10px; background: #e6f0ff; color: #0b5ed7; padding: 3px 8px; border-radius: 6px; font-size: 12px; }
-        .btn-eliminar { background: #dc3545; width: auto; padding: 8px 15px; font-size: 13px; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
-        .checkbox-group input { width: auto; margin: 0; }
-        
-        .btn-limpar { display: none; width: auto; padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 6px; margin-top: 5px; font-size: 13px; cursor: pointer; font-weight: bold; }
-        .btn-limpar:hover { background: #a71d2a; }
+        .btn-eliminar { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
 </head>
 <body>
 
 <div class="admin-container">
-    <h2><i class="fas fa-lock"></i> Painel de Administração</h2>
+    <h2>Painel de Administração</h2>
 
     <div id="login-area">
-        <div class="form-group">
-            <input type="email" id="email" placeholder="Email do Administrador">
-        </div>
-        <div class="form-group">
-            <input type="password" id="senha" placeholder="Palavra-passe">
-        </div>
-        <button onclick="fazerLogin()">Entrar no Painel</button>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="senha" placeholder="Senha">
+        <button onclick="fazerLogin()">Entrar</button>
     </div>
 
     <div id="painel" style="display:none;">
+        <div class="dashboard-stats">
+            <div class="stat-card"><h2 id="totalVagas">0</h2><p>Vagas</p></div>
+            <div class="stat-card"><h2 id="totalDestaque">0</h2><p>Destaque</p></div>
+            <div class="stat-card"><h2 id="totalViews">0</h2><p>Visitas</p></div>
+        </div>
+
         <h3>Publicar Nova Vaga</h3>
+        <input type="text" id="titulo" placeholder="Título da Vaga">
+        <input type="text" id="empresa" placeholder="Empresa">
+        <select id="provincia">
+            <option value="Maputo Cidade">Maputo Cidade</option>
+            <option value="Maputo Província">Maputo Província</option>
+            <option value="Gaza">Gaza</option>
+            <option value="Inhambane">Inhambane</option>
+            <option value="Sofala">Sofala</option>
+            <option value="Manica">Manica</option>
+            <option value="Tete">Tete</option>
+            <option value="Zambézia">Zambézia</option>
+            <option value="Nampula">Nampula</option>
+            <option value="Cabo Delgado">Cabo Delgado</option>
+            <option value="Niassa">Niassa</option>
+        </select>
+        <input type="text" id="localidade" placeholder="Localidade">
+        <input type="text" id="salario" placeholder="Salário">
+        <input type="date" id="dataPublicacao">
+        <input type="email" id="emailVaga" placeholder="Email para candidaturas">
         
-        <div class="form-group"><input type="text" id="titulo" placeholder="Título da Vaga (Ex: Motorista)"></div>
-        <div class="form-group"><input type="text" id="empresa" placeholder="Nome da Empresa"></div>
-        
-        <div class="form-group">
-            <select id="provincia">
-                <option value="Maputo Cidade">Maputo Cidade</option>
-                <option value="Maputo Província">Maputo Província</option>
-                <option value="Gaza">Gaza</option>
-                <option value="Inhambane">Inhambane</option>
-                <option value="Sofala">Sofala</option>
-                <option value="Manica">Manica</option>
-                <option value="Tete">Tete</option>
-                <option value="Zambézia">Zambézia</option>
-                <option value="Nampula">Nampula</option>
-                <option value="Cabo Delgado">Cabo Delgado</option>
-                <option value="Niassa">Niassa</option>
-            </select>
-        </div>
-
-        <div class="form-group"><input type="text" id="localidade" placeholder="Localidade / Bairro (Ex: Central)"></div>
-        <div class="form-group"><input type="text" id="salario" placeholder="Salário (Ex: 20.000 MT ou deixe em branco)"></div>
-
-        <div class="form-group">
-            <label for="dataPublicacao">Dia em que a vaga foi publicada:</label>
-            <input type="date" id="dataPublicacao">
-        </div>
-
-        <div class="form-group"><input type="email" id="emailVaga" placeholder="Email para candidaturas"></div>
-        
-        <div class="form-group">
-            <label for="fotoFicheiro">Carregar Imagem / Logótipo da Vaga:</label>
+        <div>
             <input type="file" id="fotoFicheiro" accept="image/*" onchange="aoSelecionarFoto()">
-            <button type="button" id="btnLimparFoto" class="btn-limpar" onclick="limparFoto()"><i class="fas fa-trash"></i> Remover foto selecionada</button>
+            <button type="button" id="btnLimparFoto" class="btn-limpar" onclick="limparFoto()">Remover foto selecionada</button>
         </div>
         
-        <div class="form-group"><textarea id="desc" rows="6" placeholder="Descrição, requisitos e benefícios da vaga..."></textarea></div>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="destaque">
-            <label for="destaque">🌟 Destacar esta vaga no topo do site?</label>
-        </div>
+        <textarea id="desc" rows="4" placeholder="Descrição da vaga"></textarea>
+        <div style="margin: 10px 0;"><input type="checkbox" id="destaque"> Destacar vaga?</div>
         
-        <button id="btnPublicar" onclick="publicarVaga()">Publicar Oportunidade</button>
-
+        <button id="btnPublicar" onclick="publicarVaga()">Publicar Vaga</button>
         <div id="relatorioStatus" class="status-caixa"></div>
 
-        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
-        
         <h3>Gerir Vagas Existentes</h3>
-        <div id="lista-admin">A carregar vagas do sistema...</div>
+        <div id="lista-admin">A carregar...</div>
     </div>
 </div>
 
@@ -110,194 +88,70 @@
     import { getFirestore, collection, setDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const config = { 
-        apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", 
-        projectId: "empregosportal", 
-        storageBucket: "empregosportal.firebasestorage.app", 
-        appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" 
-    };
-    
+    const config = { apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", projectId: "empregosportal", storageBucket: "empregosportal.firebasestorage.app", appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" };
     const app = initializeApp(config);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    function mostrarRelatorio(mensagem, tipo) {
-        const caixa = document.getElementById('relatorioStatus');
-        if (!caixa) return;
-        caixa.className = "status-caixa " + (tipo === 'erro' ? 'status-erro' : tipo === 'sucesso' ? 'status-sucesso' : 'status-processando');
-        caixa.innerHTML = message || mensagem; 
-        caixa.style.display = "block";
-    }
+    // Funções de UI
+    window.aoSelecionarFoto = () => document.getElementById('btnLimparFoto').style.display = 'block';
+    window.limparFoto = () => { document.getElementById('fotoFicheiro').value = ""; document.getElementById('btnLimparFoto').style.display = 'none'; };
 
-    window.aoSelecionarFoto = () => {
-        const input = document.getElementById('fotoFicheiro');
-        const btn = document.getElementById('btnLimparFoto');
-        if (input.files && input.files[0]) {
-            btn.style.display = 'inline-block';
-        } else {
-            btn.style.display = 'none';
-        }
-    };
-
-    window.limparFoto = () => {
-        document.getElementById('fotoFicheiro').value = "";
-        document.getElementById('btnLimparFoto').style.display = 'none';
-    };
-
-    // Nova função de compressão via Compressor.js (Não consome memória do Canvas)
     const processarImagemSegura = (file) => new Promise((resolve) => {
-        new Compressor(file, {
-            quality: 0.6,
-            maxWidth: 400,
-            maxHeight: 400,
-            success(resultadoBlob) {
-                const reader = new FileReader();
-                reader.readAsDataURL(resultadoBlob);
-                reader.onloadend = () => resolve(reader.result);
-            },
-            error(err) {
-                console.warn("Erro no compressor, usando padrão de segurança:", err.message);
-                resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
-            }
-        });
+        new Compressor(file, { quality: 0.6, maxWidth: 400, success(r) { 
+            const reader = new FileReader(); reader.readAsDataURL(r); reader.onloadend = () => resolve(reader.result); 
+        }, error() { resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); } });
     });
 
     window.fazerLogin = () => {
-        const emailInput = document.getElementById('email').value.trim();
-        const senhaInput = document.getElementById('senha').value;
-        
-        signInWithEmailAndPassword(auth, emailInput, senhaInput)
-        .then(() => { 
-            document.getElementById('login-area').style.display = 'none'; 
-            document.getElementById('painel').style.display = 'block'; 
-            document.getElementById('dataPublicacao').valueAsDate = new Date();
-            carregarVagasAdmin();
-        })
-        .catch(e => alert("Erro de Login: " + e.message));
+        signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('senha').value)
+        .then(() => { document.getElementById('login-area').style.display = 'none'; document.getElementById('painel').style.display = 'block'; carregarVagasAdmin(); });
     };
 
     window.publicarVaga = async () => {
-        const titulo = document.getElementById('titulo').value.trim();
-        const empresa = document.getElementById('empresa').value.trim();
-        const emailVaga = document.getElementById('emailVaga').value.trim();
-        const descricao = document.getElementById('desc').value.trim();
-        const arquivoImagem = document.getElementById('fotoFicheiro').files[0];
-        const eDestaque = document.getElementById('destaque').checked;
-        const btnPublicar = document.getElementById('btnPublicar');
+        const titulo = document.getElementById('titulo').value;
+        const arquivo = document.getElementById('fotoFicheiro').files[0];
+        let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
+        if(arquivo) img = await processarImagemSegura(arquivo);
 
-        if(!titulo || !empresa || !emailVaga || !descricao) {
-            mostrarRelatorio("❌ Erro: Preencha os campos obrigatórios (Título, Empresa, Email e Descrição).", "erro");
-            return;
-        }
-
-        try {
-            btnPublicar.disabled = true;
-            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> Comprimindo imagem via hardware...`, "processando");
-
-            let imagemCodificada = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png"; 
-            
-            if (arquivoImagem) {
-                imagemCodificada = await processarImagemSegura(arquivoImagem);
-            }
-
-            mostrarRelatorio(`⏳ <strong>Passo 2/2:</strong> Gerando link amigável e salvando dados na nuvem...`, "processando");
-            
-            const criarSlug = (texto) => {
-                return texto
-                    .toLowerCase()
-                    .trim()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') 
-                    .replace(/[^a-z0-9 -]/g, '')                     
-                    .replace(/\s+/g, '-')                            
-                    .replace(/-+/g, '-');                            
-            };
-
-            const idPersonalizado = `${criarSlug(titulo)}-${Math.floor(1000 + Math.random() * 9000)}`;
-            
-            await setDoc(doc(db, "vagas", idPersonalizado), {
-                titulo: titulo,
-                empresa: empresa,
-                provincia: document.getElementById('provincia').value,
-                localidade: document.getElementById('localidade').value.trim(),
-                salario: document.getElementById('salario').value.trim(),
-                prazo: document.getElementById('dataPublicacao').value, 
-                ano: new Date(document.getElementById('dataPublicacao').value).getFullYear() || 2026,
-                email: emailVaga,
-                imagem: imagemCodificada, 
-                foto: imagemCodificada, 
-                descricao: descricao, 
-                desc: descricao,
-                destaque: eDestaque, 
-                views: 0, 
-                dataCriacao: serverTimestamp()
-            });
-
-            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade criada com link amigável e imagem leve!`, "sucesso");
-            
-            // Limpar formulário de forma segura
-            document.getElementById('titulo').value = "";
-            document.getElementById('empresa').value = "";
-            document.getElementById('localidade').value = "";
-            document.getElementById('salario').value = "";
-            document.getElementById('dataPublicacao').valueAsDate = new Date();
-            document.getElementById('emailVaga').value = "";
-            document.getElementById('fotoFicheiro').value = "";
-            document.getElementById('btnLimparFoto').style.display = "none";
-            document.getElementById('desc').value = "";
-            document.getElementById('destaque').checked = false;
-
-            carregarVagasAdmin();
-
-        } catch (e) {
-            console.error(e);
-            const mensagemErroReal = (e && e.message) ? e.message : "Falha de comunicação com a base de dados do Firebase.";
-            mostrarRelatorio(`❌ <strong>O envio falhou!</strong><br>Motivo: ${mensagemErroReal}`, "erro");
-        } finally {
-            btnPublicar.disabled = false;
-        }
+        const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random()*1000);
+        await setDoc(doc(db, "vagas", id), {
+            titulo: titulo, empresa: document.getElementById('empresa').value,
+            provincia: document.getElementById('provincia').value,
+            localidade: document.getElementById('localidade').value,
+            salario: document.getElementById('salario').value,
+            prazo: document.getElementById('dataPublicacao').value,
+            email: document.getElementById('emailVaga').value,
+            imagem: img,
+            descricao: document.getElementById('desc').value,
+            destaque: document.getElementById('destaque').checked,
+            views: 0,
+            dataCriacao: serverTimestamp()
+        });
+        alert("Vaga publicada!");
+        carregarVagasAdmin();
     };
 
     async function carregarVagasAdmin() {
-        try {
-            const q = query(collection(db, "vagas"), orderBy("dataCriacao", "desc"));
-            const snap = await getDocs(q);
-            const lista = document.getElementById('lista-admin');
-            if(!lista) return;
-            lista.innerHTML = "";
-            
-            if(snap.empty) {
-                lista.innerHTML = "Nenhuma vaga cadastrada.";
-                return;
-            }
+        const snap = await getDocs(query(collection(db, "vagas"), orderBy("dataCriacao", "desc")));
+        const lista = document.getElementById('lista-admin');
+        lista.innerHTML = "";
+        let tVagas = 0, tViews = 0, tDestaque = 0;
 
-            snap.forEach(d => {
-                const vaga = d.data();
-                const visualizacoes = vaga.views !== undefined ? vaga.views : 0;
-                const badgeDestaque = vaga.destaque ? "⭐" : "";
-                
-                lista.innerHTML += `
-                    <div class="vaga-item">
-                        <span>
-                            <strong>${badgeDestaque} ${vaga.titulo || 'Sem título'}</strong> - ${vaga.empresa || 'Empresa'}
-                            <span class="vaga-info-views"><i class="fas fa-eye"></i> ${visualizacoes} visitas</span>
-                        </span> 
-                        <button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button>
-                    </div>
-                `;
-            });
-        } catch (e) {
-            document.getElementById('lista-admin').innerHTML = `<span style="color:red;">Erro ao carregar lista: ${e.message}</span>`;
-        }
+        snap.forEach(d => {
+            const v = d.data();
+            const views = v.views || 0;
+            tVagas++; tViews += views; if(v.destaque) tDestaque++;
+            
+            lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong> (${views} views)</span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
+        });
+
+        document.getElementById('totalVagas').innerText = tVagas;
+        document.getElementById('totalViews').innerText = tViews;
+        document.getElementById('totalDestaque').innerText = tDestaque;
     }
 
-    window.eliminarVaga = async (id) => {
-        if(confirm("Deseja eliminar esta vaga?")) {
-            try {
-                await deleteDoc(doc(db, "vagas", id));
-                carregarVagasAdmin();
-            } catch (e) { alert("Erro ao eliminar: " + e.message); }
-        }
-    };
+    window.eliminarVaga = async (id) => { if(confirm("Eliminar?")) { await deleteDoc(doc(db, "vagas", id)); carregarVagasAdmin(); } };
 </script>
 </body>
 </html>
