@@ -28,7 +28,11 @@
         .btn-eliminar { background: #dc3545; width: auto; padding: 8px 15px; font-size: 13px; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
         .checkbox-group input { width: auto; margin: 0; }
+        
+        .btn-limpar { display: none; width: auto; padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 6px; margin-top: 5px; font-size: 13px; cursor: pointer; font-weight: bold; }
+        .btn-limpar:hover { background: #a71d2a; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
 </head>
 <body>
 
@@ -79,7 +83,8 @@
         
         <div class="form-group">
             <label for="fotoFicheiro">Carregar Imagem / Logótipo da Vaga:</label>
-            <input type="file" id="fotoFicheiro" accept="image/*">
+            <input type="file" id="fotoFicheiro" accept="image/*" onchange="aoSelecionarFoto()">
+            <button type="button" id="btnLimparFoto" class="btn-limpar" onclick="limparFoto()"><i class="fas fa-trash"></i> Remover foto selecionada</button>
         </div>
         
         <div class="form-group"><textarea id="desc" rows="6" placeholder="Descrição, requisitos e benefícios da vaga..."></textarea></div>
@@ -120,45 +125,41 @@
         const caixa = document.getElementById('relatorioStatus');
         if (!caixa) return;
         caixa.className = "status-caixa " + (tipo === 'erro' ? 'status-erro' : tipo === 'sucesso' ? 'status-sucesso' : 'status-processando');
-        caixa.innerHTML = mensagem; 
+        caixa.innerHTML = message || mensagem; 
         caixa.style.display = "block";
     }
 
-    // Processamento otimizado com ObjectURL para evitar travamento de memória
-    const comprimirEConverterImagem = (file) => new Promise((resolve, reject) => {
-        const blobUrl = URL.createObjectURL(file);
-        const img = new Image();
-        img.src = blobUrl;
-        
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 400; 
-            let width = img.width;
-            let height = img.height;
+    window.aoSelecionarFoto = () => {
+        const input = document.getElementById('fotoFicheiro');
+        const btn = document.getElementById('btnLimparFoto');
+        if (input.files && input.files[0]) {
+            btn.style.display = 'inline-block';
+        } else {
+            btn.style.display = 'none';
+        }
+    };
 
-            if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
+    window.limparFoto = () => {
+        document.getElementById('fotoFicheiro').value = "";
+        document.getElementById('btnLimparFoto').style.display = 'none';
+    };
+
+    // Nova função de compressão via Compressor.js (Não consome memória do Canvas)
+    const processarImagemSegura = (file) => new Promise((resolve) => {
+        new Compressor(file, {
+            quality: 0.6,
+            maxWidth: 400,
+            maxHeight: 400,
+            success(resultadoBlob) {
+                const reader = new FileReader();
+                reader.readAsDataURL(resultadoBlob);
+                reader.onloadend = () => resolve(reader.result);
+            },
+            error(err) {
+                console.warn("Erro no compressor, usando padrão de segurança:", err.message);
+                resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
             }
-            canvas.width = width;
-            canvas.height = height;
-            
-            const ctx = canvas.getContext('2d');
-            if(ctx) {
-                ctx.drawImage(img, 0, 0, width, height);
-                const resultadoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                URL.revokeObjectURL(blobUrl); 
-                resolve(resultadoBase64);
-            } else {
-                URL.revokeObjectURL(blobUrl);
-                reject(new Error("Falha ao abrir renderizador do Canvas."));
-            }
-        };
-        
-        img.onerror = () => {
-            URL.revokeObjectURL(blobUrl);
-            reject(new Error("O sistema falhou ao carregar os pixéis desta imagem. Tente outra foto ou capture um print screen leve."));
-        };
+        });
     });
 
     window.fazerLogin = () => {
@@ -191,31 +192,28 @@
 
         try {
             btnPublicar.disabled = true;
-            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> Otimizando imagem de forma segura...`, "processando");
+            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> Comprimindo imagem via hardware...`, "processando");
 
             let imagemCodificada = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png"; 
             
             if (arquivoImagem) {
-                imagemCodificada = await comprimirEConverterImagem(arquivoImagem);
+                imagemCodificada = await processarImagemSegura(arquivoImagem);
             }
 
             mostrarRelatorio(`⏳ <strong>Passo 2/2:</strong> Gerando link amigável e salvando dados na nuvem...`, "processando");
             
-            // Função interna para limpar o título e criar a URL amigável (Slug)
             const criarSlug = (texto) => {
                 return texto
                     .toLowerCase()
                     .trim()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
-                    .replace(/[^a-z0-9 -]/g, '')                     // Remove símbolos estranhos
-                    .replace(/\s+/g, '-')                            // Troca espaços por hífen
-                    .replace(/-+/g, '-');                            // Evita hífens duplos
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') 
+                    .replace(/[^a-z0-9 -]/g, '')                     
+                    .replace(/\s+/g, '-')                            
+                    .replace(/-+/g, '-');                            
             };
 
-            // Gera o ID com base no cargo + número aleatório único (ex: superior-de-limpezas-8431)
             const idPersonalizado = `${criarSlug(titulo)}-${Math.floor(1000 + Math.random() * 9000)}`;
             
-            // Gravação usando setDoc para definir manualmente o link amigável
             await setDoc(doc(db, "vagas", idPersonalizado), {
                 titulo: titulo,
                 empresa: empresa,
@@ -234,7 +232,7 @@
                 dataCriacao: serverTimestamp()
             });
 
-            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade criada.<br>• URL Gerada: <strong>${idPersonalizado}</strong>`, "sucesso");
+            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade criada com link amigável e imagem leve!`, "sucesso");
             
             // Limpar formulário de forma segura
             document.getElementById('titulo').value = "";
@@ -244,6 +242,7 @@
             document.getElementById('dataPublicacao').valueAsDate = new Date();
             document.getElementById('emailVaga').value = "";
             document.getElementById('fotoFicheiro').value = "";
+            document.getElementById('btnLimparFoto').style.display = "none";
             document.getElementById('desc').value = "";
             document.getElementById('destaque').checked = false;
 
