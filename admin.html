@@ -124,37 +124,41 @@
         caixa.style.display = "block";
     }
 
-    // Otimiza e converte a foto para texto de forma segura e compacta
+    // Processamento ultra leve usando ObjectURL para evitar quebras no telemóvel
     const comprimirEConverterImagem = (file) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 400; // Redimensiona para formato de logo/miniatura leve
-                let width = img.width;
-                let height = img.height;
+        const blobUrl = URL.createObjectURL(file);
+        const img = new Image();
+        img.src = blobUrl;
+        
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 400; 
+            let width = img.width;
+            let height = img.height;
 
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                
-                const ctx = canvas.getContext('2d');
-                if(ctx) {
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compactação JPEG a 70%
-                } else {
-                    resolve(event.target.result);
-                }
-            };
-            img.onerror = error => reject(error);
+            if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            
+            const ctx = canvas.getContext('2d');
+            if(ctx) {
+                ctx.drawImage(img, 0, 0, width, height);
+                const resultadoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                URL.revokeObjectURL(blobUrl); // Limpa a memória do aparelho imediatamente
+                resolve(resultadoBase64);
+            } else {
+                URL.revokeObjectURL(blobUrl);
+                reject(new Error("Falha ao abrir renderizador do Canvas."));
+            }
         };
-        reader.onerror = error => reject(error);
+        
+        img.onerror = () => {
+            URL.revokeObjectURL(blobUrl);
+            reject(new Error("O sistema falhou ao carregar os pixéis desta imagem. Tente outra foto ou um ficheiro menor."));
+        };
     });
 
     window.fazerLogin = () => {
@@ -187,16 +191,17 @@
 
         try {
             btnPublicar.disabled = true;
-            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> A processar e compactar imagem localmente...`, "processando");
+            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> Otimizando e preparando imagem de forma segura...`, "processando");
 
-            let imagemCodificada = "";
+            // Imagem padrão profissional (Mala de Emprego) se não carregar nenhuma foto
+            let imagemCodificada = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png"; 
+            
             if (arquivoImagem) {
                 imagemCodificada = await comprimirEConverterImagem(arquivoImagem);
             }
 
-            mostrarRelatorio(`⏳ <strong>Passo 2/2:</strong> A guardar os dados e a aplicar o Destaque...`, "processando");
+            mostrarRelatorio(`⏳ <strong>Passo 2/2:</strong> Salvando dados com segurança na nuvem...`, "processando");
             
-            // Gravação dupla dos campos para evitar conflito com index.html ou vaga.html antigos
             await addDoc(collection(db, "vagas"), {
                 titulo: titulo,
                 empresa: empresa,
@@ -206,21 +211,18 @@
                 prazo: document.getElementById('dataPublicacao').value, 
                 ano: new Date(document.getElementById('dataPublicacao').value).getFullYear() || 2026,
                 email: emailVaga,
-                
                 imagem: imagemCodificada, 
                 foto: imagemCodificada, 
-                
                 descricao: descricao, 
                 desc: descricao,
-                
                 destaque: eDestaque, 
                 views: 0, 
                 dataCriacao: serverTimestamp()
             });
 
-            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade publicada no sistema.<br>• Destaque configurado: <strong>${eDestaque ? 'ATIVADO ⭐' : 'DESATIVADO'}</strong>`, "sucesso");
+            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade publicada.<br>• Destaque: <strong>${eDestaque ? 'ATIVADO ⭐' : 'DESATIVADO'}</strong>`, "sucesso");
             
-            // Limpar formulário
+            // Limpar formulário de forma segura
             document.getElementById('titulo').value = "";
             document.getElementById('empresa').value = "";
             document.getElementById('localidade').value = "";
@@ -235,7 +237,9 @@
 
         } catch (e) {
             console.error(e);
-            mostrarRelatorio(`❌ <strong>O envio falhou!</strong><br>Motivo: ${e.message}`, "erro");
+            // Captura segura e amigável da mensagem para evitar o "undefined"
+            const mensagemErroReal = (e && e.message) ? e.message : "Falha de comunicação com a base de dados do Firebase.";
+            mostrarRelatorio(`❌ <strong>O envio falhou!</strong><br>Motivo: ${mensagemErroReal}`, "erro");
         } finally {
             btnPublicar.disabled = false;
         }
