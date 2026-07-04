@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>PA VAGAS MZ | Empregos em Moçambique</title>
+
+<meta name="description" content="Encontre oportunidades de emprego em todo Moçambique.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+/* CSS BASE */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+color:#222;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+img{
+max-width:100%;
+display:block;
+}
+
+header{
+position:sticky;
+top:0;
+z-index:999;
+height:72px;
+background:#0b5ed7;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+color:#fff;
+box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:22px;
+font-weight:700;
+}
+
+.logo i{
+font-size:28px;
+}
+
+.menu-btn{
+font-size:25px;
+cursor:pointer;
+}
+
+.sidebar{
+position:fixed;
+left:-300px;
+top:0;
+width:300px;
+height:100%;
+background:#fff;
+transition:.35s;
+box-shadow:4px 0 20px rgba(0,0,0,.18);
+z-index:1000;
+overflow:auto;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar-top{
+background:#0b5ed7;
+padding:30px 20px;
+text-align:center;
+color:#fff;
+}
+
+.sidebar-top h2{
+margin-top:10px;
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:14px;
+padding:18px 22px;
+border-bottom:1px solid #ececec;
+transition:.25s;
+font-size:15px;
+}
+
+.sidebar a:hover{
+background:#f3f6fb;
+padding-left:28px;
+}
+
+.overlay{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+z-index:998;
+}
+
+.overlay.active{
+display:block;
+}
+
+.hero{
+background:linear-gradient(135deg,#0b5ed7,#4e9cff);
+color:#fff;
+padding:45px 22px;
+}
+
+.hero h1{
+font-size:32px;
+line-height:1.3;
+margin-bottom:12px;
+}
+
+.hero p{
+opacity:.95;
+line-height:1.7;
+margin-bottom:25px;
+}
+
+.hero-btn{
+display:inline-block;
+background:#fff;
+color:#0b5ed7;
+padding:14px 25px;
+border-radius:12px;
+font-weight:600;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+flex: 1;
+}
+
+.search-card{
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+margin-top:-35px;
+position:relative;
+z-index:10;
+}
+
+.search-card h2{
+margin-bottom:20px;
+color:#0b5ed7;
+}
+
+.search-grid{
+display:grid;
+gap:15px;
+}
+
+.campo label{
+display:block;
+margin-bottom:8px;
+font-weight:600;
+}
+
+.campo input,
+.campo select{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:15px;
+outline:none;
+}
+
+.campo input:focus,
+.campo select:focus{
+border-color:#0b5ed7;
+}
+
+#btnPesquisar{
+padding:15px;
+border:none;
+border-radius:12px;
+background:#0b5ed7;
+color:white;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition: 0.2s;
+}
+
+#btnPesquisar:hover{
+background:#094ab0;
+}
+
+.estatisticas{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:18px;
+margin-top:30px;
+}
+
+.stat{
+background:white;
+padding:25px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.stat i{
+font-size:35px;
+color:#0b5ed7;
+margin-bottom:12px;
+}
+
+.stat h3{
+font-size:30px;
+margin-bottom:5px;
+}
+
+.titulo-secao{
+margin-top:40px;
+margin-bottom:20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.titulo-secao h2{
+color:#0b5ed7;
+font-size:26px;
+}
+
+#listaDestaques,
+#listaVagas{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:22px;
+margin-bottom:35px;
+}
+
+@media(max-width:768px){
+.search-grid{
+grid-template-columns:1fr;
+}
+}
+
+@media(min-width:900px){
+.hero{
+padding:70px 50px;
+}
+.hero h1{
+font-size:45px;
+}
+.search-grid{
+grid-template-columns:2fr 1fr auto;
+align-items:end;
+}
+#btnPesquisar{
+height:52px;
+}
+}
+
+/* CARTÕES DE VAGA (ESTILO MODERNO) */
+.vaga-card {
+background: #fff;
+border-radius: 12px;
+padding: 20px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+transition: 0.3s;
+display: flex;
+flex-direction: column;
+gap: 12px;
+position: relative;
+}
+
+.vaga-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.vaga-img {
+width: 100%;
+height: 160px;
+object-fit: cover;
+border-radius: 8px;
+}
+
+.vaga-title {
+color: #0b5ed7;
+font-size: 18px;
+font-weight: 600;
+}
+
+.vaga-empresa {
+font-weight: 500;
+color: #555;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.vaga-meta {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+font-size: 13px;
+color: #777;
+}
+
+.vaga-meta span {
+background: #f3f6fb;
+padding: 6px 10px;
+border-radius: 6px;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.btn-ver-vaga {
+margin-top: auto;
+text-align: center;
+background: #0b5ed7;
+color: #fff;
+padding: 12px;
+border-radius: 8px;
+font-weight: 500;
+transition: 0.2s;
+}
+
+.btn-ver-vaga:hover {
+background: #094ab0;
+}
+
+.badge-destaque {
+position: absolute;
+top: -10px;
+right: -10px;
+background: #ffc107;
+color: #222;
+padding: 5px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: bold;
+box-shadow: 0 3px 8px rgba(255,193,7,0.4);
+}
+
+.loading-msg {
+grid-column: 1/-1;
+text-align: center;
+color: #777;
+font-size: 16px;
+padding: 20px;
+}
+
+/* BOTÃO FLUTUANTE WHATSAPP */
+.whatsapp-flutuante {
+position: fixed;
+width: 60px;
+height: 60px;
+bottom: 20px;
+right: 20px;
+background-color: #25d366;
+color: #fff;
+border-radius: 50%;
+text-align: center;
+font-size: 32px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+z-index: 999;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: 0.3s;
+}
+
+.whatsapp-flutuante:hover {
+transform: scale(1.1);
+background-color: #20ba5a;
+}
+
+/* RODAPÉ (FOOTER) */
+footer {
+background: #1a1a2e;
+color: #ffffff;
+text-align: center;
+padding: 25px 20px;
+margin-top: auto;
+border-top: 3px solid #0b5ed7;
+}
+
+footer p {
+font-size: 14px;
+margin-bottom: 12px;
+color: #bbb;
+}
+
+.footer-redes {
+display: flex;
+justify-content: center;
+gap: 20px;
+}
+
+.footer-redes a {
+color: #fff;
+font-size: 14px;
+display: flex;
+align-items: center;
+gap: 8px;
+background: rgba(255,255,255,0.08);
+padding: 8px 16px;
+border-radius: 8px;
+transition: 0.3s;
+}
+
+.footer-redes a.fb-link:hover { background: #1877f2; }
+.footer-redes a.wa-link:hover { background: #25d366; }
+</style>
+
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- MENU LATERAL -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-top">
+<i class="fas fa-briefcase fa-3x"></i>
+<h2>PA VAGAS MZ</h2>
+<p>Empregos em Moçambique</p>
+</div>
+<a href="index.html"><i class="fas fa-house"></i> Página Inicial</a>
+<a href="enviar-vaga.html"><i class="fas fa-paper-plane"></i> Enviar Vaga</a>
+<a href="contacto.html"><i class="fas fa-phone"></i> Contacto</a>
+<a href="politica.html"><i class="fas fa-user-shield"></i> Política de Privacidade</a>
+<a href="dmca.html"><i class="fas fa-copyright"></i> DMCA</a>
+<a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank"><i class="fab fa-whatsapp"></i> Canal WhatsApp</a>
+</div>
+
+<!-- CABEÇALHO -->
+<header>
+<div class="menu-btn" id="menuBtn">
+<i class="fas fa-bars"></i>
+</div>
+<div class="logo">
+<i class="fas fa-briefcase"></i>
+<span>PA VAGAS MZ</span>
+</div>
+</header>
+
+<!-- BANNER PRINCIPAL -->
+<section class="hero">
+<h1>Encontre a oportunidade certa para o seu futuro.</h1>
+<p>Milhares de vagas publicadas em todo Moçambique. Pesquise, descubra e candidate-se rapidamente.</p>
+<a href="#pesquisa" class="hero-btn">Procurar vagas</a>
+</section>
+
+<div class="container">
+<!-- PESQUISA -->
+<section id="pesquisa">
+<div class="search-card">
+<h2><i class="fas fa-search"></i> Pesquisar Vagas</h2>
+<div class="search-grid">
+<div class="campo">
+<label>Palavra-chave</label>
+<input type="text" id="pesquisaInput" placeholder="Ex.: Motorista, Contabilista, Técnico de Informática...">
+</div>
+<div class="campo">
+<label>Província</label>
+<select id="provinciaFiltro">
+<option value="">Todas as Províncias</option>
+<option>Maputo Cidade</option>
+<option>Maputo Província</option>
+<option>Gaza</option>
+<option>Inhambane</option>
+<option>Sofala</option>
+<option>Manica</option>
+<option>Tete</option>
+<option>Zambézia</option>
+<option>Nampula</option>
+<option>Cabo Delgado</option>
+<option>Niassa</option>
+</select>
+</div>
+<button id="btnPesquisar">
+<i class="fas fa-search"></i> Pesquisar
+</button>
+</div>
+</div>
+</section>
+
+<!-- ESTATÍSTICAS -->
+<section class="estatisticas">
+<div class="stat">
+<i class="fas fa-briefcase"></i>
+<h3 id="totalVagas">...</h3>
+<p>Vagas Publicadas</p>
+</div>
+<div class="stat">
+<i class="fas fa-star"></i>
+<h3 id="totalDestaques">...</h3>
+<p>Vagas em Destaque</p>
+</div>
+<div class="stat">
+<i class="fas fa-eye"></i>
+<h3 id="totalViews">...</h3>
+<p>Visualizações</p>
+</div>
+</section>
+
+<!-- DESTAQUES -->
+<section class="titulo-secao">
+<h2>⭐ Vagas em Destaque</h2>
+</section>
+<div id="listaDestaques">
+<div class="loading-msg">Carregando vagas em destaque...</div>
+</div>
+
+<!-- TODAS AS VAGAS -->
+<section class="titulo-secao">
+<h2>🆕 Últimas Vagas</h2>
+</section>
+<div id="listaVagas">
+<div class="loading-msg">Carregando vagas...</div>
+</div>
+</div>
+
+<!-- BOTÃO FLUTUANTE WHATSAPP -->
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="whatsapp-flutuante" target="_blank" title="Aceder ao Canal do WhatsApp">
+<i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- RODAPÉ GLOBAL -->
+<footer>
+<p>&copy; 2026 PA VAGAS MZ. Todos os direitos reservados.</p>
+<div class="footer-redes">
+<a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank" class="fb-link">
+<i class="fab fa-facebook-f"></i> Facebook
+</a>
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank" class="wa-link">
+<i class="fab fa-whatsapp"></i> WhatsApp
+</a>
+</div>
+</footer>
+
+<!-- SDKs DO FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+// LÓGICA DO MENU LATERAL (SIDEBAR)
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+menuBtn.addEventListener('click', () => {
+sidebar.classList.add('active');
+overlay.classList.add('active');
+});
+
+overlay.addEventListener('click', () => {
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+});
+
+// CONFIGURAÇÃO FIREBASE (Sincronizado com o teu Admin)
+const firebaseConfig = {
+apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A",
+authDomain: "empregosportal.firebaseapp.com",
+projectId: "empregosportal",
+storageBucket: "empregosportal.firebasestorage.app",
+messagingSenderId: "898227669228",
+appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9",
+measurementId: "G-9QB2YFLXER"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let todasVagas = [];
+
+// CARREGAR TODAS AS VAGAS DO FIRESTORE
+async function carregarVagas() {
+try {
+const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").get();
+todasVagas = [];
+let totalViews = 0;
+let destaquesCount = 0;
+
+snapshot.forEach(doc => {
+const vaga = doc.data();
+todasVagas.push({ id: doc.id, ...vaga });
+totalViews += vaga.views || 0;
+if(vaga.destaque) destaquesCount++;
+});
+
+// Atualizar Painel de Estatísticas
+document.getElementById("totalVagas").innerText = todasVagas.length;
+document.getElementById("totalViews").innerText = totalViews;
+document.getElementById("totalDestaques").innerText = destaquesCount;
+
+renderizarVagas(todasVagas);
+} catch (error) {
+console.error("Erro ao carregar base de dados:", error);
+document.getElementById('listaVagas').innerHTML = '<div class="loading-msg">Erro de conexão ao carregar os dados.</div>';
+document.getElementById('listaDestaques').innerHTML = '';
+}
+}
+
+// RENDERIZAR OS CARTÕES NA TELA
+function renderizarVagas(lista) {
+const containerDestaques = document.getElementById('listaDestaques');
+const containerVagas = document.getElementById('listaVagas');
+
+containerDestaques.innerHTML = '';
+containerVagas.innerHTML = '';
+
+let temDestaques = false;
+let temVagasNormais = false;
+
+lista.forEach(vaga => {
+const imagemUrl = vaga.imagem || 'https://via.placeholder.com/400x200/0b5ed7/FFFFFF?text=PA+VAGAS+MZ';
+const salarioInfo = vaga.salario && vaga.salario.trim() !== '' ? vaga.salario : 'A combinar';
+const prazoInfo = vaga.prazo ? vaga.prazo.split('-').reverse().join('/') : 'Não informado';
+
+const cardHTML = `
+<div class="vaga-card">
+${vaga.destaque ? '<div class="badge-destaque">⭐ Destaque</div>' : ''}
+<img src="${imagemUrl}" class="vaga-img" alt="${vaga.titulo}">
+<h3 class="vaga-title">${vaga.titulo}</h3>
+<div class="vaga-empresa"><i class="fas fa-building"></i> ${vaga.empresa}</div>
+<div class="vaga-meta">
+<span><i class="fas fa-map-marker-alt"></i> ${vaga.provincia}</span>
+<span><i class="fas fa-money-bill-wave"></i> ${salarioInfo}</span>
+<span><i class="fas fa-calendar-alt"></i> Expira: ${prazoInfo}</span>
+</div>
+<a href="vaga.html?id=${vaga.id}" class="btn-ver-vaga">Ver Vaga</a>
+</div>
+`;
+
+if(vaga.destaque) {
+containerDestaques.innerHTML += cardHTML;
+temDestaques = true;
+} else {
+containerVagas.innerHTML += cardHTML;
+temVagasNormais = true;
+}
+});
+
+if(!temDestaques) {
+containerDestaques.innerHTML = '<div class="loading-msg">Nenhuma vaga em destaque de momento.</div>';
+}
+if(!temVagasNormais) {
+containerVagas.innerHTML = '<div class="loading-msg">Nenhuma vaga disponível.</div>';
+}
+}
+
+// FILTRO DE PESQUISA ATIVO
+document.getElementById('btnPesquisar').addEventListener('click', () => {
+const termo = document.getElementById('pesquisaInput').value.toLowerCase().trim();
+const provincia = document.getElementById('provinciaFiltro').value;
+
+const filtradas = todasVagas.filter(vaga => {
+const titulo = (vaga.titulo || "").toLowerCase();
+const empresa = (vaga.empresa || "").toLowerCase();
+
+const matchTermo = titulo.includes(termo) || empresa.includes(termo);
+const matchProvincia = provincia === "" || vaga.provincia === provincia;
+
+return matchTermo && matchProvincia;
+});
+
+renderizarVagas(filtradas);
+document.getElementById('pesquisa').scrollIntoView({ behavior: 'smooth' });
+});
+
+// Inicialização imediata
+carregarVagas();
+</script>
+
+<!-- ================= BARRA DE COOKIES DEFINITIVA ================= -->
+<div id="barra-cookies" class="cookie-container">
+    <div class="cookie-conteudo">
+        <p>
+            <i class="fas fa-cookie-bite" style="color: #ffc107; margin-right: 5px;"></i>
+            Usamos cookies para melhorar o portal. Ao continuar, aceita a nossa <a href="politica.html">Política</a>.
+        </p>
+        <button id="btn-cookies" onclick="aceitarCookies()">Aceitar</button>
+    </div>
+</div>
+
+<style>
+    .cookie-container {
+        position: fixed;
+        bottom: -150px;
+        left: 0;
+        width: 100%;
+        background: #1e293b;
+        color: #ffffff;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 99999;
+        transition: bottom 0.4s ease-in-out;
+        padding: 12px 15px;
+        box-sizing: border-box;
+    }
+    .cookie-container.mostrar {
+        bottom: 0;
+    }
+    .cookie-conteudo {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        text-align: left;
+    }
+    .cookie-conteudo p {
+        margin: 0;
+        font-size: 13px;
+        color: #cbd5e1;
+        line-height: 1.4;
+    }
+    .cookie-conteudo a {
+        color: #38bdf8;
+        text-decoration: underline;
+    }
+    #btn-cookies {
+        background: #0b5ed7;
+        color: white;
+        border: none;
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    #btn-cookies:hover {
+        background: #094ab0;
+    }
+    @media (max-width: 340px) {
+        .cookie-conteudo {
+            flex-direction: column;
+            text-align: center;
+        }
+        #btn-cookies { width: 100%; }
+    }
+</style>
+
+<script>
+    (function() {
+        function iniciarBarra() {
+            try {
+                // Força a exibição ignorando históricos de cliques antigos
+                if (!localStorage.getItem("cookiesPA_V2")) {
+                    setTimeout(() => {
+                        var barra = document.getElementById("barra-cookies");
+                        if(barra) barra.classList.add("mostrar");
+                    }, 500);
+                }
+            } catch (e) {
+                setTimeout(() => {
+                    var barra = document.getElementById("barra-cookies");
+                    if(barra) barra.classList.add("mostrar");
+                }, 500);
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", iniciarBarra);
+        } else {
+            iniciarBarra();
+        }
+
+        window.aceitarCookies = function() {
+            var barra = document.getElementById("barra-cookies");
+            if(barra) barra.classList.remove("mostrar");
+            try {
+                localStorage.setItem("cookiesPA_V2", "true");
+            } catch (error) {}
+        };
+    })();
+</script>
+<!-- ================= FIM DA BARRA DE COOKIES ================= -->
+
+</body>
+</html>

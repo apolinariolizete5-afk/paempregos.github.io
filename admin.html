@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração | PA VAGAS MZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; color: #333; }
+        .admin-container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2, h3 { color: #0b5ed7; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input[type="file"] { padding: 10px; background: #f8f9fa; cursor: pointer; }
+        button { width: 100%; padding: 14px; background: #0b5ed7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #094ab0; }
+        button:disabled { background: #cccccc; cursor: not-allowed; }
+        
+        .status-caixa { margin: 15px 0; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; text-align: center; }
+        .status-processando { background: #e6f0ff; color: #0b5ed7; border: 1px solid #b3d4ff; }
+        .status-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; text-align: left; white-space: pre-wrap; }
+        .status-sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        .vaga-item { background: #f8f9fa; padding: 15px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border-left: 4px solid #0b5ed7; }
+        .vaga-item span { font-weight: 500; font-size: 14px; }
+        .vaga-info-views { display: inline-block; margin-left: 10px; background: #e6f0ff; color: #0b5ed7; padding: 3px 8px; border-radius: 6px; font-size: 12px; }
+        .btn-eliminar { background: #dc3545; width: auto; padding: 8px 15px; font-size: 13px; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+        .checkbox-group input { width: auto; margin: 0; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <h2><i class="fas fa-lock"></i> Painel de Administração</h2>
+
+    <div id="login-area">
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Email do Administrador">
+        </div>
+        <div class="form-group">
+            <input type="password" id="senha" placeholder="Palavra-passe">
+        </div>
+        <button onclick="fazerLogin()">Entrar no Painel</button>
+    </div>
+
+    <div id="painel" style="display:none;">
+        <h3>Publicar Nova Vaga</h3>
+        
+        <div class="form-group"><input type="text" id="titulo" placeholder="Título da Vaga (Ex: Motorista)"></div>
+        <div class="form-group"><input type="text" id="empresa" placeholder="Nome da Empresa"></div>
+        
+        <div class="form-group">
+            <select id="provincia">
+                <option value="Maputo Cidade">Maputo Cidade</option>
+                <option value="Maputo Província">Maputo Província</option>
+                <option value="Gaza">Gaza</option>
+                <option value="Inhambane">Inhambane</option>
+                <option value="Sofala">Sofala</option>
+                <option value="Manica">Manica</option>
+                <option value="Tete">Tete</option>
+                <option value="Zambézia">Zambézia</option>
+                <option value="Nampula">Nampula</option>
+                <option value="Cabo Delgado">Cabo Delgado</option>
+                <option value="Niassa">Niassa</option>
+            </select>
+        </div>
+
+        <div class="form-group"><input type="text" id="localidade" placeholder="Localidade / Bairro (Ex: Central)"></div>
+        <div class="form-group"><input type="text" id="salario" placeholder="Salário (Ex: 20.000 MT ou deixe em branco)"></div>
+
+        <div class="form-group">
+            <label for="dataPublicacao">Dia em que a vaga foi publicada:</label>
+            <input type="date" id="dataPublicacao">
+        </div>
+
+        <div class="form-group"><input type="email" id="emailVaga" placeholder="Email para candidaturas"></div>
+        
+        <div class="form-group">
+            <label for="fotoFicheiro">Carregar Imagem / Logótipo da Vaga:</label>
+            <input type="file" id="fotoFicheiro" accept="image/*">
+        </div>
+        
+        <div class="form-group"><textarea id="desc" rows="6" placeholder="Descrição, requisitos e benefícios da vaga..."></textarea></div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="destaque">
+            <label for="destaque">🌟 Destacar esta vaga no topo do site?</label>
+        </div>
+        
+        <button id="btnPublicar" onclick="publicarVaga()">Publicar Oportunidade</button>
+
+        <div id="relatorioStatus" class="status-caixa"></div>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h3>Gerir Vagas Existentes</h3>
+        <div id="lista-admin">A carregar vagas do sistema...</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const config = { 
+        apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", 
+        projectId: "empregosportal", 
+        storageBucket: "empregosportal.firebasestorage.app", 
+        appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" 
+    };
+    
+    const app = initializeApp(config);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    function mostrarRelatorio(mensagem, tipo) {
+        const caixa = document.getElementById('relatorioStatus');
+        if (!caixa) return;
+        caixa.className = "status-caixa " + (tipo === 'erro' ? 'status-erro' : tipo === 'sucesso' ? 'status-sucesso' : 'status-processando');
+        caixa.innerHTML = mensagem; 
+        caixa.style.display = "block";
+    }
+
+    // Otimiza e converte a foto para texto de forma segura e compacta
+    const comprimirEConverterImagem = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 400; // Redimensiona para formato de logo/miniatura leve
+                let width = img.width;
+                let height = img.height;
+
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                if(ctx) {
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compactação JPEG a 70%
+                } else {
+                    resolve(event.target.result);
+                }
+            };
+            img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+    });
+
+    window.fazerLogin = () => {
+        const emailInput = document.getElementById('email').value.trim();
+        const senhaInput = document.getElementById('senha').value;
+        
+        signInWithEmailAndPassword(auth, emailInput, senhaInput)
+        .then(() => { 
+            document.getElementById('login-area').style.display = 'none'; 
+            document.getElementById('painel').style.display = 'block'; 
+            document.getElementById('dataPublicacao').valueAsDate = new Date();
+            carregarVagasAdmin();
+        })
+        .catch(e => alert("Erro de Login: " + e.message));
+    };
+
+    window.publicarVaga = async () => {
+        const titulo = document.getElementById('titulo').value.trim();
+        const empresa = document.getElementById('empresa').value.trim();
+        const emailVaga = document.getElementById('emailVaga').value.trim();
+        const descricao = document.getElementById('desc').value.trim();
+        const arquivoImagem = document.getElementById('fotoFicheiro').files[0];
+        const eDestaque = document.getElementById('destaque').checked;
+        const btnPublicar = document.getElementById('btnPublicar');
+
+        if(!titulo || !empresa || !emailVaga || !descricao) {
+            mostrarRelatorio("❌ Erro: Preencha os campos obrigatórios (Título, Empresa, Email e Descrição).", "erro");
+            return;
+        }
+
+        try {
+            btnPublicar.disabled = true;
+            mostrarRelatorio(`⏳ <strong>Passo 1/2:</strong> A processar e compactar imagem localmente...`, "processando");
+
+            let imagemCodificada = "";
+            if (arquivoImagem) {
+                imagemCodificada = await comprimirEConverterImagem(arquivoImagem);
+            }
+
+            mostrarRelatorio(`⏳ <strong>Passo 2/2:</strong> A guardar os dados e a aplicar o Destaque...`, "processando");
+            
+            // Gravação dupla dos campos para evitar conflito com index.html ou vaga.html antigos
+            await addDoc(collection(db, "vagas"), {
+                titulo: titulo,
+                empresa: empresa,
+                provincia: document.getElementById('provincia').value,
+                localidade: document.getElementById('localidade').value.trim(),
+                salario: document.getElementById('salario').value.trim(),
+                prazo: document.getElementById('dataPublicacao').value, 
+                ano: new Date(document.getElementById('dataPublicacao').value).getFullYear() || 2026,
+                email: emailVaga,
+                
+                imagem: imagemCodificada, 
+                foto: imagemCodificada, 
+                
+                descricao: descricao, 
+                desc: descricao,
+                
+                destaque: eDestaque, 
+                views: 0, 
+                dataCriacao: serverTimestamp()
+            });
+
+            mostrarRelatorio(`✅ <strong>Sucesso Total!</strong> Oportunidade publicada no sistema.<br>• Destaque configurado: <strong>${eDestaque ? 'ATIVADO ⭐' : 'DESATIVADO'}</strong>`, "sucesso");
+            
+            // Limpar formulário
+            document.getElementById('titulo').value = "";
+            document.getElementById('empresa').value = "";
+            document.getElementById('localidade').value = "";
+            document.getElementById('salario').value = "";
+            document.getElementById('dataPublicacao').valueAsDate = new Date();
+            document.getElementById('emailVaga').value = "";
+            document.getElementById('fotoFicheiro').value = "";
+            document.getElementById('desc').value = "";
+            document.getElementById('destaque').checked = false;
+
+            carregarVagasAdmin();
+
+        } catch (e) {
+            console.error(e);
+            mostrarRelatorio(`❌ <strong>O envio falhou!</strong><br>Motivo: ${e.message}`, "erro");
+        } finally {
+            btnPublicar.disabled = false;
+        }
+    };
+
+    async function carregarVagasAdmin() {
+        try {
+            const q = query(collection(db, "vagas"), orderBy("dataCriacao", "desc"));
+            const snap = await getDocs(q);
+            const lista = document.getElementById('lista-admin');
+            if(!lista) return;
+            lista.innerHTML = "";
+            
+            if(snap.empty) {
+                lista.innerHTML = "Nenhuma vaga cadastrada.";
+                return;
+            }
+
+            snap.forEach(d => {
+                const vaga = d.data();
+                const visualizacoes = vaga.views !== undefined ? vaga.views : 0;
+                const badgeDestaque = vaga.destaque ? "⭐" : "";
+                
+                lista.innerHTML += `
+                    <div class="vaga-item">
+                        <span>
+                            <strong>${badgeDestaque} ${vaga.titulo || 'Sem título'}</strong> - ${vaga.empresa || 'Empresa'}
+                            <span class="vaga-info-views"><i class="fas fa-eye"></i> ${visualizacoes} visitas</span>
+                        </span> 
+                        <button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            document.getElementById('lista-admin').innerHTML = `<span style="color:red;">Erro ao carregar lista: ${e.message}</span>`;
+        }
+    }
+
+    window.eliminarVaga = async (id) => {
+        if(confirm("Deseja eliminar esta vaga?")) {
+            try {
+                await deleteDoc(doc(db, "vagas", id));
+                carregarVagasAdmin();
+            } catch (e) { alert("Erro ao eliminar: " + e.message); }
+        }
+    };
+</script>
+</body>
+</html>

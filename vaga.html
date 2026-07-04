@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Detalhes da Vaga | PA VAGAS MZ</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+/* CSS BASE */
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+body{ background:#f5f7fb; color:#222; display: flex; flex-direction: column; min-height: 100vh; }
+a{ text-decoration:none; color:inherit; }
+img{ max-width:100%; display:block; }
+
+header{ position:sticky; top:0; z-index:999; height:72px; background:#0b5ed7; display:flex; align-items:center; justify-content:space-between; padding:0 18px; color:#fff; box-shadow:0 3px 12px rgba(0,0,0,.15); }
+.logo{ display:flex; align-items:center; gap:10px; font-size:22px; font-weight:700; }
+.logo i{ font-size:28px; }
+.menu-btn{ font-size:25px; cursor:pointer; }
+
+/* SIDEBAR */
+.sidebar{ position:fixed; left:-300px; top:0; width:300px; height:100%; background:#fff; transition:.35s; box-shadow:4px 0 20px rgba(0,0,0,.18); z-index:1000; overflow:auto; }
+.sidebar.active{ left:0; }
+.sidebar-top{ background:#0b5ed7; padding:30px 20px; text-align:center; color:#fff; }
+.sidebar-top h2{ margin-top:10px; }
+.sidebar a{ display:flex; align-items:center; gap:14px; padding:18px 22px; border-bottom:1px solid #ececec; transition:.25s; font-size:15px; }
+.sidebar a:hover{ background:#f3f6fb; padding-left:28px; }
+
+.overlay{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.45); z-index:998; }
+.overlay.active{ display:block; }
+
+.container{ max-width:900px; margin:30px auto; padding:0 20px; flex: 1; }
+
+/* ESTILOS DA PÁGINA DE DETALHES */
+.vaga-detalhe-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #0b5ed7;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.vaga-main-img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+.vaga-header h1 {
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+.vaga-empresa {
+    font-size: 18px;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.grid-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.info-item i {
+    font-size: 20px;
+    color: #0b5ed7;
+    background: #e6f0ff;
+    padding: 10px;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.info-text p { font-size: 12px; color: #777; }
+.info-text h4 { font-size: 15px; color: #222; font-weight: 600; }
+
+.descricao-secao {
+    margin-top: 30px;
+    line-height: 1.8;
+    color: #333;
+    white-space: pre-line;
+}
+.descricao-secao h3 {
+    color: #0b5ed7;
+    margin-bottom: 15px;
+    font-size: 20px;
+    border-left: 4px solid #0b5ed7;
+    padding-left: 10px;
+}
+
+.zona-candidatura {
+    margin-top: 40px;
+    text-align: center;
+    padding: 30px;
+    background: #e6f0ff;
+    border-radius: 12px;
+    border: 2px dashed #0b5ed7;
+}
+.zona-candidatura p {
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* BOTÕES DE ACÇÃO */
+.botoes-acao-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.btn-candidatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #0b5ed7;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: 0.2s;
+}
+.btn-candidatar:hover { background: #094ab0; }
+
+.btn-partilhar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #6c757d;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-partilhar:hover { background: #5a6268; }
+
+.loading-msg { text-align: center; font-size: 18px; color: #777; padding: 5px; }
+
+/* BOTÃO FLUTUANTE WHATSAPP */
+.whatsapp-flutuante {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25d366;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 32px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+.whatsapp-flutuante:hover {
+    transform: scale(1.1);
+    background-color: #20ba5a;
+}
+
+/* RODAPÉ (FOOTER) */
+footer {
+    background: #1a1a2e;
+    color: #ffffff;
+    text-align: center;
+    padding: 25px 20px;
+    margin-top: auto;
+    border-top: 3px solid #0b5ed7;
+}
+footer p { font-size: 14px; margin-bottom: 12px; color: #bbb; }
+.footer-redes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.footer-redes a {
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+.footer-redes a.fb-link:hover { background: #1877f2; }
+.footer-redes a.wa-link:hover { background: #25d366; }
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <i class="fas fa-briefcase fa-3x"></i>
+        <h2>PA VAGAS MZ</h2>
+        <p>Empregos em Moçambique</p>
+    </div>
+    <a href="index.html"><i class="fas fa-house"></i> Página Inicial</a>
+    <a href="enviar-vaga.html"><i class="fas fa-paper-plane"></i> Enviar Vaga</a>
+    <a href="contacto.html"><i class="fas fa-phone"></i> Contacto</a>
+    <a href="politica.html"><i class="fas fa-user-shield"></i> Política de Privacidade</a>
+    <a href="dmca.html"><i class="fas fa-copyright"></i> DMCA</a>
+    <a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+    <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank"><i class="fab fa-whatsapp"></i> Canal WhatsApp</a>
+</div>
+
+<header>
+    <div class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="logo">
+        <i class="fas fa-briefcase"></i>
+        <span>PA VAGAS MZ</span>
+    </div>
+</header>
+
+<div class="container">
+    <a href="index.html" class="btn-voltar">
+        <i class="fas fa-arrow-left"></i> Voltar para a Página Inicial
+    </a>
+
+    <div id="conteudoVaga">
+        <div class="loading-msg">Carregando detalhes da oportunidade...</div>
+    </div>
+</div>
+
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="whatsapp-flutuante" target="_blank" title="Aceder ao Canal do WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<footer>
+    <p>&copy; 2026 PA VAGAS MZ. Todos os direitos reservados.</p>
+    <div class="footer-redes">
+        <a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank" class="fb-link">
+            <i class="fab fa-facebook-f"></i> Facebook
+        </a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank" class="wa-link">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+    </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+    // LÓGICA DO MENU LATERAL
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+    overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+    // CONFIGURAÇÃO FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A",
+        authDomain: "empregosportal.firebaseapp.com",
+        projectId: "empregosportal",
+        storageBucket: "empregosportal.firebasestorage.app",
+        messagingSenderId: "898227669228",
+        appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9",
+        measurementId: "G-9QB2YFLXER"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // CAPTURAR ID DA URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const vagaId = urlParams.get('id');
+
+    async function carregarDetalhesVaga() {
+        if (!vagaId) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        try {
+            const docRef = db.collection("vagas").doc(vagaId);
+            const doc = await docRef.get();
+
+            if (!doc.exists) {
+                document.getElementById('conteudoVaga').innerHTML = '<div class="loading-msg">Vaga não encontrada ou já expirou.</div>';
+                return;
+            }
+
+            const vaga = doc.data();
+
+            // PROTEÇÃO DO CONTADOR CONTRA ERROS DE PERMISSÃO
+            try {
+                await docRef.update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+            } catch (erroViews) {
+                console.warn("Contador de views bloqueado pelas Regras do Firebase. Ignorando...");
+            }
+
+            // Formatação de dados secundários
+            const salarioInfo = vaga.salario && vaga.salario.trim() !== '' ? vaga.salario : 'A combinar';
+            const prazoInfo = vaga.prazo ? vaga.prazo.split('-').reverse().join('/') : 'Não informado';
+            const localidadeInfo = vaga.localidade ? `${vaga.localidade}, ${vaga.provincia}` : vaga.provincia;
+
+            // Montar o HTML interno
+            let htmlVaga = `
+                <div class="vaga-detalhe-card">
+                    ${vaga.imagem ? `<img src="${vaga.imagem}" class="vaga-main-img" alt="${vaga.titulo}">` : ''}
+                    
+                    <div class="vaga-header">
+                        <h1>${vaga.titulo}</h1>
+                        <div class="vaga-empresa"><i class="fas fa-building"></i> ${vaga.empresa}</div>
+                    </div>
+
+                    <div class="grid-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="info-text">
+                                <p>Localização</p>
+                                <h4>${localidadeInfo}</h4>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div class="info-text">
+                                <p>Salário</p>
+                                <h4>${salarioInfo}</h4>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div class="info-text">
+                                <p>Prazo de Candidatura</p>
+                                <h4>${prazoInfo}</h4>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-eye"></i>
+                            <div class="info-text">
+                                <p>Visualizações</p>
+                                <h4>${(vaga.views || 0) + 1}</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="descricao-secao">
+                        <h3>Descrição da Vaga</h3>
+                        <p>${vaga.descricao}</p>
+                    </div>
+
+                    <div class="zona-candidatura">
+                        <p>Interessado nesta oportunidade? Envie a sua candidatura diretamente para a empresa.</p>
+                        
+                        <div class="botoes-acao-container">
+                            <a href="mailto:${vaga.email}?subject=Candidatura: ${encodeURIComponent(vaga.titulo)}" class="btn-candidatar">
+                                <i class="fas fa-paper-plane"></i> Enviar Currículo por Email
+                            </a>
+                            
+                            <button onclick="partilharOportunidade('${vaga.titulo}')" class="btn-partilhar">
+                                <i class="fas fa-share-alt"></i> Partilhar Oportunidade
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('conteudoVaga').innerHTML = htmlVaga;
+
+        } catch (error) {
+            console.error("Erro geral ao carregar vaga:", error);
+            document.getElementById('conteudoVaga').innerHTML = '<div class="loading-msg">Erro ao carregar os dados desta vaga.</div>';
+        }
+    }
+
+    // FUNÇÃO PARA PARTILHAR VAGA
+    function partilharOportunidade(tituloVaga) {
+        if (navigator.share) {
+            navigator.share({
+                title: tituloVaga,
+                text: `Olha só esta excelente oportunidade de emprego: "${tituloVaga}" no portal PA VAGAS MZ!`,
+                url: window.location.href
+            }).catch(err => console.log("Erro ao partilhar:", err));
+        } else {
+            // Fallback para navegadores que não suportam a API de partilha nativa
+            navigator.clipboard.writeText(window.location.href);
+            alert("O link direto desta vaga foi copiado para a sua área de transferência! Já o pode colar e enviar para quem quiser.");
+        }
+    }
+
+    // Executa o carregamento
+    carregarDetalhesVaga();
+</script>
+
+</body>
+</html>
