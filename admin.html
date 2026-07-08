@@ -8,21 +8,14 @@
     <style>
         body { font-family: sans-serif; padding: 20px; background: #f4f7f6; color: #333; }
         .admin-container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Dashboard Stats */
         .dashboard-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-card { background: #0b5ed7; color: white; padding: 15px; border-radius: 8px; text-align: center; }
         .stat-card h2 { margin: 0; font-size: 20px; }
         .stat-card p { margin: 5px 0 0; font-size: 12px; opacity: 0.9; }
-
         h2, h3 { color: #0b5ed7; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
         button { width: 100%; padding: 14px; background: #0b5ed7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        
         .btn-limpar { display: none; background: #dc3545; padding: 8px; margin-top: 5px; border-radius: 6px; font-size: 13px; color: white; cursor: pointer; border: none; }
-        .status-caixa { margin: 15px 0; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
         .vaga-item { background: #f8f9fa; padding: 15px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border-left: 4px solid #0b5ed7; }
         .btn-eliminar { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
     </style>
@@ -76,7 +69,6 @@
         <div style="margin: 10px 0;"><input type="checkbox" id="destaque"> Destacar vaga?</div>
         
         <button id="btnPublicar" onclick="publicarVaga()">Publicar Vaga</button>
-        <div id="relatorioStatus" class="status-caixa"></div>
 
         <h3>Gerir Vagas Existentes</h3>
         <div id="lista-admin">A carregar...</div>
@@ -93,50 +85,62 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // Funções de UI
     window.aoSelecionarFoto = () => document.getElementById('btnLimparFoto').style.display = 'block';
     window.limparFoto = () => { document.getElementById('fotoFicheiro').value = ""; document.getElementById('btnLimparFoto').style.display = 'none'; };
 
-    // Correção aplicada aqui para garantir a aceitação e processamento de todas as imagens
+    // Compressão ultra-segura para garantir que cabe no Firestore[span_3](start_span)[span_3](end_span)
     const processarImagemSegura = (file) => new Promise((resolve) => {
         new Compressor(file, { 
-            quality: 0.5, 
-            maxWidth: 300, 
+            quality: 0.3, 
+            maxWidth: 200, 
             mimeType: 'image/jpeg',
             success(r) { 
-                const reader = new FileReader(); reader.readAsDataURL(r); reader.onloadend = () => resolve(reader.result); 
+                const reader = new FileReader(); 
+                reader.readAsDataURL(r); 
+                reader.onloadend = () => resolve(reader.result); 
             }, 
-            error() { resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); } 
+            error(err) { 
+                alert("Erro na compressão: " + err.message);
+                resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); 
+            } 
         });
     });
 
     window.fazerLogin = () => {
         signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('senha').value)
-        .then(() => { document.getElementById('login-area').style.display = 'none'; document.getElementById('painel').style.display = 'block'; carregarVagasAdmin(); });
+        .then(() => { document.getElementById('login-area').style.display = 'none'; document.getElementById('painel').style.display = 'block'; carregarVagasAdmin(); })
+        .catch(e => alert("Login falhou: " + e.message));
     };
 
     window.publicarVaga = async () => {
-        const titulo = document.getElementById('titulo').value;
-        const arquivo = document.getElementById('fotoFicheiro').files[0];
-        let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
-        if(arquivo) img = await processarImagemSegura(arquivo);
+        try {
+            const titulo = document.getElementById('titulo').value;
+            const arquivo = document.getElementById('fotoFicheiro').files[0];
+            let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
+            
+            if(arquivo) {
+                img = await processarImagemSegura(arquivo);
+            }
 
-        const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random()*1000);
-        await setDoc(doc(db, "vagas", id), {
-            titulo: titulo, empresa: document.getElementById('empresa').value,
-            provincia: document.getElementById('provincia').value,
-            localidade: document.getElementById('localidade').value,
-            salario: document.getElementById('salario').value,
-            prazo: document.getElementById('dataPublicacao').value,
-            email: document.getElementById('emailVaga').value,
-            imagem: img,
-            descricao: document.getElementById('desc').value,
-            destaque: document.getElementById('destaque').checked,
-            views: 0,
-            dataCriacao: serverTimestamp()
-        });
-        alert("Vaga publicada!");
-        carregarVagasAdmin();
+            const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random()*1000);
+            await setDoc(doc(db, "vagas", id), {
+                titulo: titulo, empresa: document.getElementById('empresa').value,
+                provincia: document.getElementById('provincia').value,
+                localidade: document.getElementById('localidade').value,
+                salario: document.getElementById('salario').value,
+                prazo: document.getElementById('dataPublicacao').value,
+                email: document.getElementById('emailVaga').value,
+                imagem: img,
+                descricao: document.getElementById('desc').value,
+                destaque: document.getElementById('destaque').checked,
+                views: 0,
+                dataCriacao: serverTimestamp()
+            });
+            alert("Vaga publicada com sucesso!");
+            carregarVagasAdmin();
+        } catch (e) {
+            alert("Erro ao publicar: " + e.message);
+        }
     };
 
     async function carregarVagasAdmin() {
@@ -149,10 +153,8 @@
             const v = d.data();
             const views = v.views || 0;
             tVagas++; tViews += views; if(v.destaque) tDestaque++;
-            
-            lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong> (${views} views)</span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
+            lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong></span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
         });
-
         document.getElementById('totalVagas').innerText = tVagas;
         document.getElementById('totalViews').innerText = tViews;
         document.getElementById('totalDestaque').innerText = tDestaque;
