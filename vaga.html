@@ -3,41 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes da Oportunidade | PA VAGAS MZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>PA VAGAS MZ | Detalhes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
-        body { background:#f5f7fb; color:#222; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width:900px; margin:30px auto; padding:0 20px; flex: 1; }
+        body { background:#f5f7fb; color:#333; padding-bottom: 80px; }
+        .header-top { background:#0b5ed7; color:white; padding:15px; text-align:center; font-weight:600; }
+        .container { padding: 15px; }
         
-        /* Estilos dos Cards de Vagas */
-        .grid-ultimas-vagas { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
-        .card-vaga { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #f0f0f0; }
-        .img-miniatura-vaga { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; background: #eee; }
-        .badge-nova { background: #e74c3c; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; float: right; }
-        .btn-ver-vaga { display: block; text-align: center; background: #0b5ed7; color: #fff; padding: 10px; border-radius: 8px; margin-top: 10px; text-decoration: none; }
-        
-        /* Layout Geral */
-        header { background:#0b5ed7; padding:20px; color:#fff; display:flex; align-items:center; }
-        .loading-container { text-align: center; padding: 50px; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #0b5ed7; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Grid das Últimas Vagas (2 por linha) */
+        .grid-vagas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .card-vaga {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .card-vaga img { width: 100%; height: 80px; object-fit: cover; border-radius: 5px; margin-bottom: 5px; }
+        .card-vaga h4 { font-size: 13px; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 35px;}
+        .btn-card { display: block; background: #0b5ed7; color: white; padding: 6px; font-size: 11px; border-radius: 5px; margin-top: 5px; text-decoration: none; }
+
+        /* Botões de Ação */
+        .btn-acao { display: block; width: 100%; padding: 15px; border-radius: 8px; border: none; margin-bottom: 10px; font-weight: 600; cursor: pointer; text-align: center; color: white; text-decoration: none; }
+        .btn-email { background: #0b5ed7; }
+        .btn-partilhar { background: #6c757d; }
+        .btn-wa { background: #25d366; }
+
+        footer { margin-top: 30px; text-align: center; padding: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #777; }
     </style>
 </head>
 <body>
 
-<header><h2>PA VAGAS MZ</h2></header>
+<div class="header-top">PA VAGAS MZ</div>
 
 <div class="container">
-    <div id="conteudoVaga">
-        <div class="loading-container"><div class="spinner"></div><p>A carregar...</p></div>
+    <div id="detalhesVaga">
+        <p>A carregar informações...</p>
     </div>
-    
-    <div id="ultimasVagasContainer">
-        <!-- As vagas recentes aparecerão aqui -->
+
+    <div id="zonaBotoes" style="display:none;">
+        <a id="linkEmail" href="#" class="btn-acao btn-email"><i class="fas fa-envelope"></i> Enviar Currículo</a>
+        <button class="btn-acao btn-partilhar" onclick="window.print()"><i class="fas fa-share-alt"></i> Partilhar Oportunidade</button>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="btn-acao btn-wa"><i class="fab fa-whatsapp"></i> Receba Vagas no WhatsApp</a>
     </div>
+
+    <h3 style="margin-top:30px;">Últimas Oportunidades</h3>
+    <div id="gridVagas" class="grid-vagas"></div>
 </div>
+
+<footer>
+    <p>&copy; 2026 PA VAGAS MZ</p>
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -51,57 +74,41 @@
         messagingSenderId: "898227669228",
         appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9"
     };
-    
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
     const urlParams = new URLSearchParams(window.location.search);
     const vagaId = urlParams.get('id');
 
     async function carregarTudo() {
-        // 1. Carregar Detalhes da Vaga Atual
+        // 1. Carregar Detalhe
         if (vagaId) {
             const doc = await db.collection("vagas").doc(vagaId).get();
             if (doc.exists) {
                 const v = doc.data();
-                document.getElementById('conteudoVaga').innerHTML = `
-                    <h1>${v.titulo}</h1>
-                    <img src="${v.imagem}" style="width:100%; border-radius:10px;">
-                    <p>${v.descricao}</p>
-                `;
+                document.getElementById('detalhesVaga').innerHTML = `<h2>${v.titulo}</h2><p style="margin:15px 0;">${v.descricao}</p>`;
+                document.getElementById('linkEmail').href = `mailto:${v.email}`;
+                document.getElementById('zonaBotoes').style.display = 'block';
             }
         }
 
-        // 2. Carregar as 6 Últimas Vagas (ORDEM CRONOLÓGICA)
-        try {
-            const snapshot = await db.collection("vagas")
-                .orderBy("dataCriacao", "desc") // <--- O SEGREDO ESTÁ AQUI
-                .limit(6)
-                .get();
-
-            let htmlUltimas = '<h3>Últimas Oportunidades</h3><div class="grid-ultimas-vagas">';
-            
-            snapshot.forEach(doc => {
-                if(doc.id !== vagaId) {
-                    const v = doc.data();
-                    const img = v.imagem ? v.imagem : 'https://placehold.co/400x200?text=Sem+Imagem';
-                    htmlUltimas += `
-                        <div class="card-vaga">
-                            <span class="badge-nova">Nova</span>
-                            <img src="${img}" class="img-miniatura-vaga">
-                            <h4>${v.titulo}</h4>
-                            <p>${v.empresa}</p>
-                            <a href="detalhes_vaga.html?id=${doc.id}" class="btn-ver-vaga">Ver Detalhes</a>
-                        </div>
-                    `;
-                }
-            });
-            htmlUltimas += '</div>';
-            document.getElementById('ultimasVagasContainer').innerHTML = htmlUltimas;
-        } catch (e) {
-            console.error("Erro ao carregar últimas vagas (Verifique o índice do Firebase):", e);
-        }
+        // 2. Carregar Grid 2x2
+        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(4).get();
+        let gridHtml = '';
+        snapshot.forEach(doc => {
+            if(doc.id !== vagaId) {
+                const v = doc.data();
+                gridHtml += `
+                    <div class="card-vaga">
+                        <img src="${v.imagem || 'https://via.placeholder.com/150'}">
+                        <h4>${v.titulo}</h4>
+                        <a href="detalhes_vaga.html?id=${doc.id}" class="btn-card">Ver</a>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('gridVagas').innerHTML = gridHtml;
     }
-
     carregarTudo();
 </script>
 
