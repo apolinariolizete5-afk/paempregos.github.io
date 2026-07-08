@@ -4,40 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes da Vaga | PA VAGAS MZ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
-        body { background:#f5f7fb; color:#333; display: flex; flex-direction: column; min-height: 100vh; }
+        body { background:#f5f7fb; color:#222; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* HEADER E MENU */
-        header { background:#0b5ed7; color:#fff; padding:15px; display:flex; align-items:center; justify-content:space-between; }
+        header { background:#0b5ed7; height:70px; display:flex; align-items:center; padding:0 20px; color:white; justify-content:space-between; position:sticky; top:0; z-index:99; }
         .menu-btn { font-size:24px; cursor:pointer; }
-        .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#fff; z-index:1000; transition:0.3s; padding:20px; box-shadow:2px 0 5px rgba(0,0,0,0.1); }
+
+        /* Sidebar */
+        .sidebar { position:fixed; left:-300px; top:0; width:280px; height:100%; background:white; z-index:1000; transition:0.3s; box-shadow:5px 0 15px rgba(0,0,0,0.1); padding:20px; }
         .sidebar.active { left:0; }
-        .sidebar a { display:block; padding:15px 0; color:#333; text-decoration:none; font-weight:500; }
         .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; }
         .overlay.active { display:block; }
+        .sidebar a { display:block; padding:15px; color:#333; text-decoration:none; border-bottom:1px solid #eee; }
 
-        /* CONTEÚDO */
-        .container { padding: 20px; flex: 1; }
-        .btn-voltar { display: inline-block; margin-bottom: 15px; color: #0b5ed7; font-weight: 600; text-decoration: none; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; flex: 1; }
         
-        .card-detalhe { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .val-badge { background: #fee2e2; color: #b91c1c; padding: 5px 10px; border-radius: 5px; font-weight: bold; display: inline-block; margin: 10px 0; }
-        
-        .btn-acao { display: block; width: 100%; padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: center; color: white; text-decoration: none; font-weight: 600; }
-        
-        /* GRID 2x2 */
-        .grid-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .card-vaga { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
-        .card-vaga img { width: 100%; height: 80px; object-fit: cover; border-radius: 5px; margin-bottom: 5px; }
-        .card-vaga h4 { font-size: 12px; height: 30px; overflow: hidden; margin-bottom: 5px; }
-        .btn-ver { display: block; background: #0b5ed7; color: white; padding: 5px; border-radius: 5px; font-size: 11px; text-decoration: none; }
+        /* Grid Vagas */
+        .grid-vagas { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 20px; }
+        .card-vaga { background: white; padding: 10px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card-vaga h4 { font-size: 12px; height: 35px; overflow: hidden; margin-bottom: 5px; }
+        .btn-ver { display: block; background: #0b5ed7; color: white; padding: 5px; border-radius: 5px; font-size: 11px; margin-top: 5px; }
 
-        /* FOOTER */
-        footer { background: #1a1a2e; color: white; padding: 30px 20px; text-align: center; margin-top: 40px; }
-        .social-icons { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
-        .social-icons a { color: white; font-size: 24px; text-decoration: none; }
+        /* CTA WhatsApp */
+        .cta-wa { background: #25d366; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; font-weight: 600; text-decoration: none; display: block; }
+
+        /* Footer */
+        footer { background: #1a1a2e; color: white; padding: 20px; text-align: center; margin-top: 40px; }
+        .footer-social { display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .footer-social a { color: white; font-size: 20px; }
+        .assinatura { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -45,9 +43,10 @@
 <div class="overlay" id="overlay"></div>
 
 <div class="sidebar" id="sidebar">
-    <h3>Menu</h3>
+    <h3 style="margin-bottom:20px;">Menu</h3>
     <a href="index.html">Página Inicial</a>
     <a href="enviar-vaga.html">Publicar Vaga</a>
+    <a href="contacto.html">Contacto</a>
 </div>
 
 <header>
@@ -57,27 +56,23 @@
 </header>
 
 <div class="container">
-    <a href="index.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-    
-    <div id="conteudoVaga" class="card-detalhe">
-        <p>A carregar informações da vaga...</p>
-    </div>
+    <div id="conteudoVaga">Carregando...</div>
 
-    <div id="zonaBotoes">
-        <a id="btnEmail" href="#" class="btn-acao" style="background:#0b5ed7;"><i class="fas fa-envelope"></i> Enviar Currículo</a>
-        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="btn-acao" style="background:#25d366;"><i class="fab fa-whatsapp"></i> Receba Vagas no WhatsApp</a>
-    </div>
+    <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="cta-wa">
+        <i class="fab fa-whatsapp"></i> Receba novas vagas no seu WhatsApp
+    </a>
 
-    <h3 style="margin-top:25px;">Últimas Oportunidades</h3>
+    <h3>Últimas Oportunidades</h3>
     <div id="gridVagas" class="grid-vagas"></div>
 </div>
 
 <footer>
-    <p>&copy; 2026 PA VAGAS MZ</p>
-    <div class="social-icons">
-        <a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank"><i class="fab fa-facebook"></i></a>
-        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <div class="footer-social">
+        <a href="https://www.facebook.com/profile.php?id=61591198577276"><i class="fab fa-facebook"></i></a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p"><i class="fab fa-whatsapp"></i></a>
     </div>
+    <p>&copy; 2026 PA VAGAS MZ</p>
+    <div class="assinatura">Criado e Desenvolvido por Apolinário Lizete</div>
 </footer>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -101,41 +96,34 @@
     }
     document.getElementById('overlay').onclick = toggleMenu;
 
+    // Carregar Detalhes
     const urlParams = new URLSearchParams(window.location.search);
     const vagaId = urlParams.get('id');
 
     async function init() {
-        if (vagaId) {
+        if(vagaId) {
             const doc = await db.collection("vagas").doc(vagaId).get();
-            if (doc.exists) {
+            if(doc.exists) {
                 const v = doc.data();
-                // Verifica se a validade existe antes de mostrar
-                const validadeHtml = v.validade ? `<div class="val-badge"><i class="fas fa-calendar-alt"></i> Válido até: ${v.validade}</div>` : '';
-                
                 document.getElementById('conteudoVaga').innerHTML = `
                     <h2>${v.titulo}</h2>
                     <p><strong>Empresa:</strong> ${v.empresa}</p>
-                    ${validadeHtml}
-                    <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
-                    <p style="white-space: pre-line;">${v.descricao}</p>
+                    <p>${v.descricao}</p>
                 `;
-                document.getElementById('btnEmail').href = `mailto:${v.email}?subject=Candidatura: ${v.titulo}`;
             }
         }
 
-        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(4).get();
+        // Carregar 6 últimas vagas
+        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(6).get();
         let html = '';
         snapshot.forEach(doc => {
-            if(doc.id !== vagaId) {
-                const v = doc.data();
-                html += `
-                    <div class="card-vaga">
-                        <img src="${v.imagem || 'https://via.placeholder.com/150'}">
-                        <h4>${v.titulo}</h4>
-                        <a href="detalhes_vaga.html?id=${doc.id}" class="btn-ver">Ver</a>
-                    </div>
-                `;
-            }
+            const v = doc.data();
+            html += `
+                <div class="card-vaga">
+                    <h4>${v.titulo}</h4>
+                    <a href="vaga.html?id=${doc.id}" class="btn-ver">Ver</a>
+                </div>
+            `;
         });
         document.getElementById('gridVagas').innerHTML = html;
     }
