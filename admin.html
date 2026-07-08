@@ -97,10 +97,17 @@
     window.aoSelecionarFoto = () => document.getElementById('btnLimparFoto').style.display = 'block';
     window.limparFoto = () => { document.getElementById('fotoFicheiro').value = ""; document.getElementById('btnLimparFoto').style.display = 'none'; };
 
+    // Correção aplicada aqui para garantir a aceitação e processamento de todas as imagens
     const processarImagemSegura = (file) => new Promise((resolve) => {
-        new Compressor(file, { quality: 0.6, maxWidth: 400, success(r) { 
-            const reader = new FileReader(); reader.readAsDataURL(r); reader.onloadend = () => resolve(reader.result); 
-        }, error() { resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); } });
+        new Compressor(file, { 
+            quality: 0.5, 
+            maxWidth: 300, 
+            mimeType: 'image/jpeg',
+            success(r) { 
+                const reader = new FileReader(); reader.readAsDataURL(r); reader.onloadend = () => resolve(reader.result); 
+            }, 
+            error() { resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); } 
+        });
     });
 
     window.fazerLogin = () => {
