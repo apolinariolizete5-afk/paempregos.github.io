@@ -3,63 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PA VAGAS MZ | Detalhes</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Detalhes da Vaga | PA VAGAS MZ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
-        body { background:#f5f7fb; color:#333; padding-bottom: 80px; }
-        .header-top { background:#0b5ed7; color:white; padding:15px; text-align:center; font-weight:600; }
-        .container { padding: 15px; }
+        body { background:#f5f7fb; color:#333; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Grid das Últimas Vagas (2 por linha) */
-        .grid-vagas {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .card-vaga {
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+        /* HEADER E MENU */
+        header { background:#0b5ed7; color:#fff; padding:15px; display:flex; align-items:center; justify-content:space-between; }
+        .menu-btn { font-size:24px; cursor:pointer; }
+        .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#fff; z-index:1000; transition:0.3s; padding:20px; box-shadow:2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar.active { left:0; }
+        .sidebar a { display:block; padding:15px 0; color:#333; text-decoration:none; font-weight:500; }
+        .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; }
+        .overlay.active { display:block; }
+
+        /* CONTEÚDO */
+        .container { padding: 20px; flex: 1; }
+        .btn-voltar { display: inline-block; margin-bottom: 15px; color: #0b5ed7; font-weight: 600; text-decoration: none; }
+        
+        .card-detalhe { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .val-badge { background: #fee2e2; color: #b91c1c; padding: 5px 10px; border-radius: 5px; font-weight: bold; display: inline-block; margin: 10px 0; }
+        
+        .btn-acao { display: block; width: 100%; padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: center; color: white; text-decoration: none; font-weight: 600; }
+        
+        /* GRID 2x2 */
+        .grid-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .card-vaga { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
         .card-vaga img { width: 100%; height: 80px; object-fit: cover; border-radius: 5px; margin-bottom: 5px; }
-        .card-vaga h4 { font-size: 13px; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 35px;}
-        .btn-card { display: block; background: #0b5ed7; color: white; padding: 6px; font-size: 11px; border-radius: 5px; margin-top: 5px; text-decoration: none; }
+        .card-vaga h4 { font-size: 12px; height: 30px; overflow: hidden; margin-bottom: 5px; }
+        .btn-ver { display: block; background: #0b5ed7; color: white; padding: 5px; border-radius: 5px; font-size: 11px; text-decoration: none; }
 
-        /* Botões de Ação */
-        .btn-acao { display: block; width: 100%; padding: 15px; border-radius: 8px; border: none; margin-bottom: 10px; font-weight: 600; cursor: pointer; text-align: center; color: white; text-decoration: none; }
-        .btn-email { background: #0b5ed7; }
-        .btn-partilhar { background: #6c757d; }
-        .btn-wa { background: #25d366; }
-
-        footer { margin-top: 30px; text-align: center; padding: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #777; }
+        /* FOOTER */
+        footer { background: #1a1a2e; color: white; padding: 30px 20px; text-align: center; margin-top: 40px; }
+        .social-icons { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
+        .social-icons a { color: white; font-size: 24px; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<div class="header-top">PA VAGAS MZ</div>
+<div class="overlay" id="overlay"></div>
+
+<div class="sidebar" id="sidebar">
+    <h3>Menu</h3>
+    <a href="index.html">Página Inicial</a>
+    <a href="enviar-vaga.html">Publicar Vaga</a>
+</div>
+
+<header>
+    <div class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <div>PA VAGAS MZ</div>
+    <div></div>
+</header>
 
 <div class="container">
-    <div id="detalhesVaga">
-        <p>A carregar informações...</p>
+    <a href="index.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+    
+    <div id="conteudoVaga" class="card-detalhe">
+        <p>A carregar informações da vaga...</p>
     </div>
 
-    <div id="zonaBotoes" style="display:none;">
-        <a id="linkEmail" href="#" class="btn-acao btn-email"><i class="fas fa-envelope"></i> Enviar Currículo</a>
-        <button class="btn-acao btn-partilhar" onclick="window.print()"><i class="fas fa-share-alt"></i> Partilhar Oportunidade</button>
-        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="btn-acao btn-wa"><i class="fab fa-whatsapp"></i> Receba Vagas no WhatsApp</a>
+    <div id="zonaBotoes">
+        <a id="btnEmail" href="#" class="btn-acao" style="background:#0b5ed7;"><i class="fas fa-envelope"></i> Enviar Currículo</a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="btn-acao" style="background:#25d366;"><i class="fab fa-whatsapp"></i> Receba Vagas no WhatsApp</a>
     </div>
 
-    <h3 style="margin-top:30px;">Últimas Oportunidades</h3>
+    <h3 style="margin-top:25px;">Últimas Oportunidades</h3>
     <div id="gridVagas" class="grid-vagas"></div>
 </div>
 
 <footer>
     <p>&copy; 2026 PA VAGAS MZ</p>
+    <div class="social-icons">
+        <a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    </div>
 </footer>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -77,39 +95,51 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+    document.getElementById('overlay').onclick = toggleMenu;
+
     const urlParams = new URLSearchParams(window.location.search);
     const vagaId = urlParams.get('id');
 
-    async function carregarTudo() {
-        // 1. Carregar Detalhe
+    async function init() {
         if (vagaId) {
             const doc = await db.collection("vagas").doc(vagaId).get();
             if (doc.exists) {
                 const v = doc.data();
-                document.getElementById('detalhesVaga').innerHTML = `<h2>${v.titulo}</h2><p style="margin:15px 0;">${v.descricao}</p>`;
-                document.getElementById('linkEmail').href = `mailto:${v.email}`;
-                document.getElementById('zonaBotoes').style.display = 'block';
+                // Verifica se a validade existe antes de mostrar
+                const validadeHtml = v.validade ? `<div class="val-badge"><i class="fas fa-calendar-alt"></i> Válido até: ${v.validade}</div>` : '';
+                
+                document.getElementById('conteudoVaga').innerHTML = `
+                    <h2>${v.titulo}</h2>
+                    <p><strong>Empresa:</strong> ${v.empresa}</p>
+                    ${validadeHtml}
+                    <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
+                    <p style="white-space: pre-line;">${v.descricao}</p>
+                `;
+                document.getElementById('btnEmail').href = `mailto:${v.email}?subject=Candidatura: ${v.titulo}`;
             }
         }
 
-        // 2. Carregar Grid 2x2
         const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(4).get();
-        let gridHtml = '';
+        let html = '';
         snapshot.forEach(doc => {
             if(doc.id !== vagaId) {
                 const v = doc.data();
-                gridHtml += `
+                html += `
                     <div class="card-vaga">
                         <img src="${v.imagem || 'https://via.placeholder.com/150'}">
                         <h4>${v.titulo}</h4>
-                        <a href="detalhes_vaga.html?id=${doc.id}" class="btn-card">Ver</a>
+                        <a href="detalhes_vaga.html?id=${doc.id}" class="btn-ver">Ver</a>
                     </div>
                 `;
             }
         });
-        document.getElementById('gridVagas').innerHTML = gridHtml;
+        document.getElementById('gridVagas').innerHTML = html;
     }
-    carregarTudo();
+    init();
 </script>
 
 </body>
