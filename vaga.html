@@ -12,10 +12,12 @@
         header { height:72px; background:#0b5ed7; display:flex; align-items:center; padding:0 18px; color:#fff; position:sticky; top:0; z-index:999; }
         .menu-btn { font-size:25px; cursor:pointer; margin-right:15px; }
         
-        .sidebar { position:fixed; left:-300px; top:0; width:300px; height:100%; background:#fff; z-index:1000; transition:0.3s; box-shadow:4px 0 20px rgba(0,0,0,0.1); }
+        /* Sidebar */
+        .sidebar { position:fixed; left:-300px; top:0; width:300px; height:100%; background:#fff; z-index:1000; transition:0.3s; box-shadow:4px 0 20px rgba(0,0,0,0.1); overflow-y:auto; }
         .sidebar.active { left:0; }
         .sidebar-top { background:#0b5ed7; padding:30px 20px; color:#fff; text-align:center; }
-        .sidebar a { display:block; padding:18px 22px; border-bottom:1px solid #eee; color:#333; }
+        .sidebar a { display:block; padding:18px 22px; border-bottom:1px solid #eee; color:#333; text-decoration:none; font-weight:500; }
+        .sidebar a:hover { background:#f0f0f0; }
         .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:998; }
         .overlay.active { display:block; }
 
@@ -23,21 +25,26 @@
         .vaga-detalhe-card { background: #fff; border-radius: 18px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .vaga-main-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-bottom: 25px; }
         .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0; background: #f8f9fa; padding: 20px; border-radius: 12px; }
-        .info-item { display: flex; align-items: center; gap: 10px; }
+        .info-item { display: flex; flex-direction: column; }
         
         /* Botões */
-        .btn-candidatar { display: block; width: 100%; background: #0b5ed7; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 20px; }
+        .btn-candidatar { display: block; width: 100%; background: #0b5ed7; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 20px; text-decoration: none; }
+        .btn-partilhar { display: block; width: 100%; background: #28a745; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 10px; text-decoration: none; cursor: pointer; border: none; font-size: 16px; }
+
+        /* Banner WhatsApp */
+        .banner-whatsapp { background: #25d366; color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 30px 0; }
+        .banner-whatsapp a { color: white; text-decoration: underline; font-weight: bold; }
         
-        /* Grid 2x2 Outras Oportunidades */
+        /* Grid 2x2 */
         .grid-outras { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .card-mini { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
         .card-mini img { width: 100%; height: 80px; object-fit: cover; border-radius: 5px; }
-        .card-mini h4 { font-size: 13px; margin: 10px 0; }
-        .btn-ver { font-size: 12px; color: #0b5ed7; font-weight: bold; }
+        .card-mini h4 { font-size: 13px; margin: 10px 0; height: 30px; overflow: hidden; }
+        .btn-ver { font-size: 12px; color: #0b5ed7; font-weight: bold; text-decoration: none; }
 
-        /* Footer */
-        footer { background: #1a1a2e; color: white; padding: 20px; text-align: center; margin-top: 40px; }
-        .assinatura { font-size: 9px; color: #888; text-transform: uppercase; margin-top: 10px; }
+        footer { background: #1a1a2e; color: white; padding: 30px 20px; text-align: center; margin-top: 40px; }
+        .footer-redes { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 24px; }
+        .assinatura { font-size: 9px; color: #888; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -47,6 +54,9 @@
     <div class="sidebar-top"><h2>PA VAGAS MZ</h2></div>
     <a href="index.html">Página Inicial</a>
     <a href="enviar-vaga.html">Enviar Vaga</a>
+    <a href="contacto.html">Contacto</a>
+    <a href="politica.html">Política de Privacidade</a>
+    <a href="dmca.html">DMCA</a>
 </div>
 
 <header>
@@ -55,13 +65,23 @@
 </header>
 
 <div class="container">
-    <div id="conteudoVaga" class="vaga-detalhe-card">Carregando...</div>
+    <div id="conteudoVaga" class="vaga-detalhe-card">Carregando detalhes...</div>
     
+    <!-- Banner WhatsApp -->
+    <div class="banner-whatsapp">
+        <p><i class="fab fa-whatsapp"></i> Receba Novas Vagas no teu WhatsApp</p>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank">Aceder ao Canal Oficial</a>
+    </div>
+
     <h3 style="margin-top:30px;">Outras Oportunidades</h3>
     <div id="listaSugestoes" class="grid-outras"></div>
 </div>
 
 <footer>
+    <div class="footer-redes">
+        <a href="#" style="color:#1877f2;"><i class="fab fa-facebook"></i></a>
+        <a href="#" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a>
+    </div>
     <p>&copy; 2026 PA VAGAS MZ</p>
     <div class="assinatura">Criado e Desenvolvido por Apolinário Lizete</div>
 </footer>
@@ -88,18 +108,18 @@
                     <h1>${v.titulo}</h1>
                     <p><strong>Empresa:</strong> ${v.empresa}</p>
                     <div class="grid-info">
-                        <div><small>Localização</small><br><strong>${v.provincia}</strong></div>
-                        <div><small>Salário</small><br><strong>${v.salario || 'A combinar'}</strong></div>
-                        <div><small>Válido até</small><br><strong>${v.prazo ? v.prazo.split('-').reverse().join('/') : 'Não informado'}</strong></div>
+                        <div class="info-item"><small>Localização</small><strong>${v.provincia}</strong></div>
+                        <div class="info-item"><small>Salário</small><strong>${v.salario || 'A combinar'}</strong></div>
+                        <div class="info-item"><small>Válido até</small><strong>${v.prazo ? v.prazo.split('-').reverse().join('/') : 'Não informado'}</strong></div>
                     </div>
-                    <p>${v.descricao}</p>
+                    <p style="white-space:pre-line;">${v.descricao}</p>
                     <a href="mailto:${v.email}?subject=Candidatura: ${v.titulo}" class="btn-candidatar"><i class="fas fa-envelope"></i> Enviar Candidatura</a>
+                    <button class="btn-partilhar" onclick="partilhar()"><i class="fas fa-share-alt"></i> Partilhar Vaga</button>
                 `;
             }
         }
         
-        // Outras Oportunidades (Grid 2x2)
-        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(6).get();
+        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(4).get();
         let html = '';
         snapshot.forEach(doc => {
             if(doc.id !== vagaId) {
@@ -115,6 +135,15 @@
         });
         document.getElementById('listaSugestoes').innerHTML = html;
     }
+
+    function partilhar() {
+        if (navigator.share) {
+            navigator.share({ title: document.title, url: window.location.href });
+        } else {
+            alert('Copiado para a área de transferência!');
+        }
+    }
+
     carregar();
 </script>
 
