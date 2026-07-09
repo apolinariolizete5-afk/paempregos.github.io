@@ -88,27 +88,17 @@
     window.aoSelecionarFoto = () => document.getElementById('btnLimparFoto').style.display = 'block';
     window.limparFoto = () => { document.getElementById('fotoFicheiro').value = ""; document.getElementById('btnLimparFoto').style.display = 'none'; };
 
-    // Função ultra-otimizada: leitura segura e compressão[span_5](start_span)[span_5](end_span)
     const processarImagemSegura = (file) => new Promise((resolve) => {
-        if (!file) {
-            resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
-            return;
-        }
-
+        console.log("A processar imagem:", file.name, "Tamanho:", file.size);
         new Compressor(file, { 
-            quality: 0.2, 
-            maxWidth: 150, 
-            mimeType: 'image/jpeg',
+            quality: 0.1, maxWidth: 100, mimeType: 'image/jpeg',
             success(result) { 
                 const reader = new FileReader(); 
                 reader.onloadend = () => resolve(reader.result);
-                reader.onerror = () => resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
+                reader.onerror = (e) => { console.error("Erro leitor:", e); resolve(null); };
                 reader.readAsDataURL(result); 
             }, 
-            error(err) { 
-                console.error("Erro na compressão:", err);
-                resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); 
-            } 
+            error(err) { console.error("Erro compressor:", err); resolve(null); } 
         });
     });
 
@@ -119,16 +109,20 @@
     };
 
     window.publicarVaga = async () => {
-        try {
-            const titulo = document.getElementById('titulo').value;
-            const fileInput = document.getElementById('fotoFicheiro');
-            let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
-            
-            // Verificação segura do arquivo[span_6](start_span)[span_6](end_span)
-            if (fileInput.files && fileInput.files[0]) {
-                img = await processarImagemSegura(fileInput.files[0]);
+        const titulo = document.getElementById('titulo').value;
+        const fileInput = document.getElementById('fotoFicheiro');
+        let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
+        
+        if (fileInput.files && fileInput.files[0]) {
+            const result = await processarImagemSegura(fileInput.files[0]);
+            if (result) {
+                img = result;
+            } else {
+                alert("Erro ao processar imagem. Usando ícone padrão.");
             }
+        }
 
+        try {
             const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random()*1000);
             await setDoc(doc(db, "vagas", id), {
                 titulo: titulo, 
@@ -141,13 +135,13 @@
                 imagem: img,
                 descricao: document.getElementById('desc').value,
                 destaque: document.getElementById('destaque').checked,
-                views: 0, // Inicia em 0, e é incrementado na visualização[span_7](start_span)[span_7](end_span)
+                views: 0,
                 dataCriacao: serverTimestamp()
             });
             alert("Vaga publicada com sucesso!");
             carregarVagasAdmin();
         } catch (e) {
-            alert("Erro ao publicar: " + e.message);
+            alert("Erro ao enviar para Firebase: " + e.message);
         }
     };
 
@@ -159,7 +153,7 @@
 
         snap.forEach(d => {
             const v = d.data();
-            const views = v.views || 0; // Leitura segura das views[span_8](start_span)[span_8](end_span)
+            const views = v.views || 0;
             tVagas++; tViews += views; if(v.destaque) tDestaque++;
             lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong> (${views} views)</span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
         });
