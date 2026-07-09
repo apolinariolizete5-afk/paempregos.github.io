@@ -88,19 +88,25 @@
     window.aoSelecionarFoto = () => document.getElementById('btnLimparFoto').style.display = 'block';
     window.limparFoto = () => { document.getElementById('fotoFicheiro').value = ""; document.getElementById('btnLimparFoto').style.display = 'none'; };
 
-    // Compressão ultra-segura para garantir que cabe no Firestore[span_3](start_span)[span_3](end_span)
+    // Função ultra-otimizada: leitura segura e compressão[span_5](start_span)[span_5](end_span)
     const processarImagemSegura = (file) => new Promise((resolve) => {
+        if (!file) {
+            resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
+            return;
+        }
+
         new Compressor(file, { 
-            quality: 0.3, 
-            maxWidth: 200, 
+            quality: 0.2, 
+            maxWidth: 150, 
             mimeType: 'image/jpeg',
-            success(r) { 
+            success(result) { 
                 const reader = new FileReader(); 
-                reader.readAsDataURL(r); 
-                reader.onloadend = () => resolve(reader.result); 
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png");
+                reader.readAsDataURL(result); 
             }, 
             error(err) { 
-                alert("Erro na compressão: " + err.message);
+                console.error("Erro na compressão:", err);
                 resolve("https://cdn-icons-png.flaticon.com/512/2986/2986323.png"); 
             } 
         });
@@ -115,16 +121,18 @@
     window.publicarVaga = async () => {
         try {
             const titulo = document.getElementById('titulo').value;
-            const arquivo = document.getElementById('fotoFicheiro').files[0];
+            const fileInput = document.getElementById('fotoFicheiro');
             let img = "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
             
-            if(arquivo) {
-                img = await processarImagemSegura(arquivo);
+            // Verificação segura do arquivo[span_6](start_span)[span_6](end_span)
+            if (fileInput.files && fileInput.files[0]) {
+                img = await processarImagemSegura(fileInput.files[0]);
             }
 
             const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random()*1000);
             await setDoc(doc(db, "vagas", id), {
-                titulo: titulo, empresa: document.getElementById('empresa').value,
+                titulo: titulo, 
+                empresa: document.getElementById('empresa').value,
                 provincia: document.getElementById('provincia').value,
                 localidade: document.getElementById('localidade').value,
                 salario: document.getElementById('salario').value,
@@ -133,7 +141,7 @@
                 imagem: img,
                 descricao: document.getElementById('desc').value,
                 destaque: document.getElementById('destaque').checked,
-                views: 0,
+                views: 0, // Inicia em 0, e é incrementado na visualização[span_7](start_span)[span_7](end_span)
                 dataCriacao: serverTimestamp()
             });
             alert("Vaga publicada com sucesso!");
@@ -151,9 +159,9 @@
 
         snap.forEach(d => {
             const v = d.data();
-            const views = v.views || 0;
+            const views = v.views || 0; // Leitura segura das views[span_8](start_span)[span_8](end_span)
             tVagas++; tViews += views; if(v.destaque) tDestaque++;
-            lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong></span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
+            lista.innerHTML += `<div class="vaga-item"><span><strong>${v.titulo}</strong> (${views} views)</span><button class="btn-eliminar" onclick="eliminarVaga('${d.id}')">Eliminar</button></div>`;
         });
         document.getElementById('totalVagas').innerText = tVagas;
         document.getElementById('totalViews').innerText = tViews;
