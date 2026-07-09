@@ -3,68 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Administração | PA VAGAS MZ</title>
+    <title>Painel de Gestão Premium | PA VAGAS MZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
-        .admin-container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; background: #0b5ed7; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-limpar { background: #dc3545; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; display: none; margin-top: 5px; }
-        .divider { text-align: center; margin: 15px 0; color: #666; font-weight: bold; }
-        .vaga-item { background: #f8f9fa; padding: 15px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border-left: 4px solid #0b5ed7; }
+        :root { --primary: #0b5ed7; --danger: #dc3545; --bg: #f4f7f6; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: #333; padding: 20px; }
+        .admin-container { max-width: 900px; margin: 0 auto; }
+        
+        /* Dashboard Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border-bottom: 3px solid var(--primary); }
+        .stat-card h3 { color: #666; font-size: 13px; margin: 0; text-transform: uppercase; }
+        .stat-card p { font-size: 24px; font-weight: 700; color: var(--primary); margin: 10px 0 0 0; }
+
+        /* Form Styling */
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        h2 { color: var(--primary); margin-top: 0; }
+        .input-group { margin-bottom: 15px; }
+        label { font-weight: 600; font-size: 14px; margin-bottom: 5px; display: block; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* List Styling */
+        .vaga-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .vaga-info { display: flex; flex-direction: column; }
+        .vaga-info span { font-size: 12px; color: #888; }
+        .vaga-info strong { font-size: 16px; }
+        .btn-del { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
 </head>
 <body>
 
 <div class="admin-container">
-    <h2>Painel de Administração</h2>
-
-    <div id="login-area">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="senha" placeholder="Senha">
-        <button onclick="fazerLogin()">Entrar</button>
+    <div id="login-area" class="card">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Email" style="margin-bottom:10px;">
+        <input type="password" id="senha" placeholder="Senha" style="margin-bottom:10px;">
+        <button class="btn-main" onclick="fazerLogin()">Entrar</button>
     </div>
 
     <div id="painel" style="display:none;">
-        <h3>Publicar Nova Vaga</h3>
+        <h2>Painel de Gestão</h2>
         
-        <div class="form-group">
-            <label>Título da Vaga *</label>
-            <input type="text" id="titulo" placeholder="Ex: Programador Web">
-        </div>
-        
-        <div class="form-group">
-            <label>Empresa *</label>
-            <input type="text" id="empresa" placeholder="Ex: Tech MZ">
+        <div class="stats-grid">
+            <div class="stat-card"><h3>Total Vagas</h3><p id="totalVagas">0</p></div>
+            <div class="stat-card"><h3>Visualizações (Hoje)</h3><p id="viewsHoje">0</p></div>
+            <div class="stat-card"><h3>Visualizações (Semana)</h3><p id="viewsSemana">0</p></div>
+            <div class="stat-card"><h3>Total (Geral)</h3><p id="totalViews">0</p></div>
         </div>
 
-        <div class="form-group">
-            <label>Imagem da Vaga *</label>
-            <input type="file" id="fotoFicheiro" accept="image/*" onchange="verificarFicheiro(this)">
-            <button type="button" id="btnLimparFoto" class="btn-limpar" onclick="limparFicheiro()">Remover imagem selecionada</button>
-            
-            <div class="divider">OU</div>
-
-            <input type="text" id="fotoLink" placeholder="Cole o link da imagem aqui" oninput="verificarLink(this)">
+        <div class="card">
+            <h3>Nova Vaga</h3>
+            <input type="text" id="titulo" placeholder="Título" style="margin-bottom:10px;">
+            <input type="text" id="empresa" placeholder="Empresa" style="margin-bottom:10px;">
+            <input type="file" id="fotoFicheiro" accept="image/*" onchange="verificarFicheiro(this)" style="margin-bottom:10px;">
+            <input type="text" id="fotoLink" placeholder="Ou cole o Link da imagem" oninput="verificarLink(this)" style="margin-bottom:10px;">
+            <textarea id="desc" rows="3" placeholder="Descrição" style="margin-bottom:10px;"></textarea>
+            <button class="btn-main" onclick="publicarVaga()">Publicar Agora</button>
         </div>
 
-        <select id="provincia">
-            <option value="Maputo Cidade">Maputo Cidade</option>
-            <option value="Maputo Província">Maputo Província</option>
-        </select>
-        <input type="text" id="localidade" placeholder="Localidade">
-        <textarea id="desc" rows="3" placeholder="Descrição"></textarea>
-        
-        <button onclick="publicarVaga()">Publicar Vaga</button>
+        <h3>Vagas Ativas</h3>
+        <div id="lista-admin"></div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, setDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const config = { apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", projectId: "empregosportal", storageBucket: "empregosportal.firebasestorage.app", appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" };
@@ -72,89 +78,71 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // --- LÓGICA DE IMAGEM ---
-    window.verificarFicheiro = (input) => {
-        const file = input.files[0];
-        if (!file) return;
-        if (!file.type.startsWith('image/')) {
-            alert("Formato não suportado! Escolha uma imagem.");
-            limparFicheiro();
-            return;
-        }
-        document.getElementById('fotoLink').disabled = true;
-        document.getElementById('btnLimparFoto').style.display = 'block';
-    };
-
-    window.limparFicheiro = () => {
-        document.getElementById('fotoFicheiro').value = "";
-        document.getElementById('fotoLink').disabled = false;
-        document.getElementById('btnLimparFoto').style.display = 'none';
-    };
-
-    window.verificarLink = (input) => {
-        const fileInput = document.getElementById('fotoFicheiro');
-        if (input.value.length > 0) {
-            fileInput.disabled = true;
-        } else {
-            fileInput.disabled = false;
-        }
-    };
+    // --- Lógica Imagem ---
+    window.verificarFicheiro = (input) => { if(input.files.length) document.getElementById('fotoLink').disabled = true; };
+    window.verificarLink = (input) => { document.getElementById('fotoFicheiro').disabled = (input.value.length > 0); };
 
     const processarImagem = (file) => new Promise((resolve) => {
-        new Compressor(file, {
-            quality: 0.3, maxWidth: 300, mimeType: 'image/jpeg',
-            success(result) {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(result);
-            },
-            error() { resolve(null); }
-        });
+        new Compressor(file, { quality: 0.3, maxWidth: 300, success(r) { 
+            const reader = new FileReader(); reader.onloadend = () => resolve(reader.result); reader.readAsDataURL(r); 
+        }, error() { resolve(null); } });
     });
-
-    // --- PUBLICAÇÃO ---
-    window.publicarVaga = async () => {
-        const titulo = document.getElementById('titulo').value;
-        const empresa = document.getElementById('empresa').value;
-        const fileInput = document.getElementById('fotoFicheiro');
-        const linkInput = document.getElementById('fotoLink');
-
-        if (!titulo || !empresa) { alert("Título e Empresa são obrigatórios!"); return; }
-
-        let imagemFinal = null;
-
-        // Tenta processar ficheiro
-        if (fileInput.files.length > 0) {
-            imagemFinal = await processarImagem(fileInput.files[0]);
-            if (!imagemFinal) {
-                alert("Erro ao processar imagem. Tente usar um link ou outra imagem.");
-                return;
-            }
-        } 
-        // Se não, tenta usar link
-        else if (linkInput.value.length > 0) {
-            imagemFinal = linkInput.value;
-        } else {
-            alert("É obrigatório selecionar uma imagem ou inserir um link!");
-            return;
-        }
-
-        // Salvar no Firebase
-        try {
-            const id = titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
-            await setDoc(doc(db, "vagas", id), {
-                titulo, empresa, imagem: imagemFinal, dataCriacao: serverTimestamp()
-            });
-            alert("Vaga publicada!");
-        } catch (e) {
-            alert("Erro ao publicar: " + e.message);
-        }
-    };
 
     window.fazerLogin = () => {
         signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('senha').value)
-        .then(() => { document.getElementById('login-area').style.display = 'none'; document.getElementById('painel').style.display = 'block'; });
+        .then(() => { document.getElementById('login-area').style.display = 'none'; document.getElementById('painel').style.display = 'block'; carregarDados(); });
     };
+
+    window.publicarVaga = async () => {
+        const titulo = document.getElementById('titulo').value;
+        const fileInput = document.getElementById('fotoFicheiro');
+        const linkInput = document.getElementById('fotoLink');
+        
+        let img = linkInput.value || "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
+        if (fileInput.files.length > 0) {
+            img = await processarImagem(fileInput.files[0]);
+            if(!img) { alert("Erro ao processar ficheiro."); return; }
+        }
+
+        await setDoc(doc(db, "vagas", titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now()), {
+            titulo, empresa: document.getElementById('empresa').value, imagem: img,
+            descricao: document.getElementById('desc').value, views: 0, dataCriacao: serverTimestamp()
+        });
+        alert("Publicado!"); carregarDados();
+    };
+
+    async function carregarDados() {
+        const snap = await getDocs(query(collection(db, "vagas"), orderBy("dataCriacao", "desc")));
+        const lista = document.getElementById('lista-admin');
+        lista.innerHTML = "";
+        
+        let totalViews = 0, viewsHoje = 0, viewsSemana = 0, totalVagas = 0;
+        const hoje = new Date();
+
+        snap.forEach(d => {
+            const v = d.data();
+            const views = v.views || 0;
+            const data = v.dataCriacao ? v.dataCriacao.toDate() : new Date();
+            
+            totalVagas++; totalViews += views;
+
+            // Filtros de data
+            if(data.toDateString() === hoje.toDateString()) viewsHoje += views;
+            if((hoje - data) / (1000 * 60 * 60 * 24) < 7) viewsSemana += views;
+
+            lista.innerHTML += `<div class="vaga-item">
+                <div class="vaga-info"><strong>${v.titulo}</strong><span>${views} visualizações</span></div>
+                <button class="btn-del" onclick="eliminar('${d.id}')"><i class="fas fa-trash"></i></button>
+            </div>`;
+        });
+
+        document.getElementById('totalVagas').innerText = totalVagas;
+        document.getElementById('totalViews').innerText = totalViews;
+        document.getElementById('viewsHoje').innerText = viewsHoje;
+        document.getElementById('viewsSemana').innerText = viewsSemana;
+    }
+
+    window.eliminar = async (id) => { if(confirm("Eliminar vaga?")) { await deleteDoc(doc(db, "vagas", id)); carregarDados(); } };
 </script>
 </body>
 </html>
