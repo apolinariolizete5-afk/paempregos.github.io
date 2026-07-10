@@ -155,6 +155,11 @@
 
             if(doc.exists) {
                 const v = doc.data();
+                // Incrementar o número de visualizações (+1) na base de dados
+db.collection("vagas").doc(vagaId).update({
+    views: firebase.firestore.FieldValue.increment(1)
+});
+
                 
                 // SEO Update
                 document.title = v.titulo + " | PA VAGAS MZ";
