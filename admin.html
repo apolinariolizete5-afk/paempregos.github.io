@@ -152,36 +152,59 @@
             document.getElementById('desc').value = "";
             btn.disabled = false; btn.innerText = "Publicar Vaga";
         } catch (e) { alert("Erro: " + e.message); btn.disabled = false; btn.innerText = "Publicar Vaga"; }
-    };
+    ;
+        function iniciarMonitoramento() {
+    onSnapshot(query(collection(db, "vagas"), orderBy("dataCriacao", "desc")), (snap) => {
+        const lista = document.getElementById('lista-admin');
+        lista.innerHTML = "";
+        let tV = 0, tVw = 0, vH = 0, vS = 0;
+        
+        const hoje = new Date();
+        const hojeStr = hoje.toLocaleDateString('sv-SE'); // Data de hoje
 
-    function iniciarMonitoramento() {
-        onSnapshot(query(collection(db, "vagas"), orderBy("dataCriacao", "desc")), (snap) => {
-            const lista = document.getElementById('lista-admin');
-            lista.innerHTML = "";
-            let tV = 0, tVw = 0, vH = 0, vS = 0;
-            const hoje = new Date();
+        // Criar uma lista com os últimos 7 dias para somar a semana
+        const ultimos7Dias = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date();
+            d.setDate(hoje.getDate() - i);
+            ultimos7Dias.push(d.toLocaleDateString('sv-SE'));
+        }
 
-            snap.forEach(d => {
-                const v = d.data();
-                const views = v.views || 0;
-                const data = v.dataCriacao ? v.dataCriacao.toDate() : new Date();
-                
-                tV++; tVw += views;
-                if(data.toDateString() === hoje.toDateString()) vH += views;
-                if((hoje - data) / (1000 * 60 * 60 * 24) < 7) vS += views;
+        snap.forEach(d => {
+            const v = d.data();
+            const views = v.views || 0;
+            const dailyViews = v.dailyViews || {}; // Pega o mapa de visualizações diárias
+            const data = v.dataCriacao ? v.dataCriacao.toDate() : new Date();
+            
+            tV++; 
+            tVw += views; // Total Geral
 
-                lista.innerHTML += `<div class="vaga-item">
-                    <div><strong>${v.titulo}</strong><span>${views} views | ${data.toLocaleDateString()}</span></div>
-                    <button class="btn-del" onclick="eliminar('${d.id}')">Eliminar</button>
-                </div>`;
+            // 1. Calcular Visualizações de Hoje
+            if (dailyViews[hojeStr]) {
+                vH += dailyViews[hojeStr];
+            }
+
+            // 2. Calcular Visualizações da Semana (últimos 7 dias)
+            ultimos7Dias.forEach(diaStr => {
+                if (dailyViews[diaStr]) {
+                    vS += dailyViews[diaStr];
+                }
             });
 
-            document.getElementById('totalVagas').innerText = tV;
-            document.getElementById('totalViews').innerText = tVw;
-            document.getElementById('viewsHoje').innerText = vH;
-            document.getElementById('viewsSemana').innerText = vS;
+            lista.innerHTML += `<div class="vaga-item">
+                <div><strong>${v.titulo}</strong><span>${views} views | ${data.toLocaleDateString()}</span></div>
+                <button class="btn-del" onclick="eliminar('${d.id}')">Eliminar</button>
+            </div>`;
         });
-    }
+
+        // Atualizar os cards do topo do painel
+        document.getElementById('totalVagas').innerText = tV;
+        document.getElementById('totalViews').innerText = tVw;
+        document.getElementById('viewsHoje').innerText = vH;
+        document.getElementById('viewsSemana').innerText = vS;
+    });
+}
+
 
     window.eliminar = async (id) => { if(confirm("Eliminar?")) await deleteDoc(doc(db, "vagas", id)); };
 </script>
