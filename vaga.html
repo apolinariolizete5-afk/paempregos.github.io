@@ -1,145 +1,245 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes da Vaga | PA VAGAS MZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Meta Tags Base -->
+    <meta property="og:title" id="og-title" content="Oportunidade de Emprego | PA VAGAS MZ">
+    <meta property="og:description" id="og-desc" content="Veja os detalhes desta vaga no maior portal de empregos de Moçambique.">
+    <meta property="og:type" content="article">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
-        body { background:#f5f7fb; color:#222; display: flex; flex-direction: column; min-height: 100vh; }
-        header { height:72px; background:#0b5ed7; display:flex; align-items:center; padding:0 18px; color:#fff; position:sticky; top:0; z-index:999; }
-        .menu-btn { font-size:25px; cursor:pointer; margin-right:15px; }
+        :root { --primary: #0b5ed7; --bg: #f4f7f6; --text: #333; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Sidebar */
-        .sidebar { position:fixed; left:-300px; top:0; width:300px; height:100%; background:#fff; z-index:1000; transition:0.3s; box-shadow:4px 0 20px rgba(0,0,0,0.1); overflow-y:auto; }
-        .sidebar.active { left:0; }
-        .sidebar-top { background:#0b5ed7; padding:30px 20px; color:#fff; text-align:center; }
-        .sidebar a { display:block; padding:18px 22px; border-bottom:1px solid #eee; color:#333; text-decoration:none; font-weight:500; }
-        .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:998; }
-        .overlay.active { display:block; }
+        /* Menu Lateral (Igual ao index.html) */
+        .side-menu { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 0; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
+        .side-menu a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 10px; }
+        .side-menu a:hover { color: var(--primary); background: #f0f0f0; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 30px; cursor: pointer; color: white; }
 
-        .container { max-width:900px; margin:30px auto; padding:0 20px; }
-        .vaga-detalhe-card { background: #fff; border-radius: 18px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        /* Cabeçalho */
+        header { background: var(--primary); color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 999; }
+        
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; flex: 1; }
+        
+        /* Detalhes da Vaga */
+        .vaga-detalhe-card { background: #fff; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .btn-back { background: none; border: none; cursor: pointer; color: #555; margin-bottom: 20px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .btn-back:hover { color: var(--primary); }
+        
         .vaga-main-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-bottom: 25px; }
-        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0; background: #f8f9fa; padding: 20px; border-radius: 12px; }
+        .vaga-titulo { font-size: 24px; color: var(--primary); margin-bottom: 5px; }
+        .vaga-empresa { font-size: 16px; color: #666; font-weight: 600; margin-bottom: 20px; }
         
-        .btn-candidatar { display: block; width: 100%; background: #0b5ed7; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 20px; text-decoration: none; }
-        .btn-partilhar { display: block; width: 100%; background: #28a745; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 10px; cursor: pointer; border: none; font-size: 16px; }
-
-        .banner-whatsapp { background: #25d366; color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 30px 0; }
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid var(--primary); }
+        .grid-info div small { color: #777; font-size: 13px; text-transform: uppercase; }
+        .grid-info div strong { font-size: 15px; color: var(--text); }
+        
+        .vaga-descricao { white-space: pre-wrap; line-height: 1.7; color: #444; margin-bottom: 30px; }
+        
+        /* Botões de Ação */
+        .btn-candidatar { display: block; width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; text-decoration: none; font-size: 16px; transition: 0.3s; }
+        .btn-candidatar:hover { background: #094eb3; }
+        .btn-partilhar { display: block; width: 100%; background: #28a745; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-top: 15px; cursor: pointer; border: none; font-size: 16px; transition: 0.3s; }
+        .btn-partilhar:hover { background: #218838; }
+        
+        /* Outras Vagas */
+        .banner-whatsapp { background: #25d366; color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 40px 0 20px 0; box-shadow: 0 4px 10px rgba(37,211,102,0.3); }
         .banner-whatsapp a { color: white; text-decoration: underline; font-weight: bold; }
         
-        /* Grid 2 Colunas */
-        .grid-outras { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .card-mini { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
-        .card-mini img { width: 100%; height: 80px; object-fit: cover; border-radius: 5px; }
-        .card-mini h4 { font-size: 13px; margin: 10px 0; height: 30px; overflow: hidden; }
-        .btn-ver { font-size: 12px; color: #0b5ed7; font-weight: bold; text-decoration: none; }
+        .grid-outras { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card-mini { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-mini:hover { transform: translateY(-3px); }
+        .card-mini h4 { font-size: 15px; margin-bottom: 10px; color: var(--text); }
+        .card-mini p { font-size: 13px; color: #666; margin-bottom: 15px; }
+        .btn-ver-mini { background: #e9ecef; color: var(--text); text-align: center; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .btn-ver-mini:hover { background: var(--primary); color: white; }
 
-        footer { background: #1a1a2e; color: white; padding: 30px 20px; text-align: center; margin-top: 40px; }
-        .footer-redes { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 24px; }
-        .assinatura { font-size: 9px; color: #888; text-transform: uppercase; }
+        /* Rodapé & Loader */
+        footer { background: #fff; padding: 40px 20px; text-align: center; border-top: 1px solid #eee; margin-top: auto; width: 100%; }
+        footer .links a { margin: 0 10px; color: #555; text-decoration: none; font-size: 0.9rem; }
+        footer .social a { font-size: 1.5rem; margin: 0 15px; color: #333; }
+        .assinatura { font-size: 0.75rem; color: #888; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .float-wa { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; padding: 15px 18px; border-radius: 50px; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9998; text-decoration: none; }
+        
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay"></div>
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-top"><h2>PA VAGAS MZ</h2></div>
-    <a href="index.html">Página Inicial</a>
-    <a href="enviar-vaga.html">Enviar Vaga</a>
-    <a href="contacto.html">Contacto</a>
-    <a href="politica.html">Política de Privacidade</a>
-    <a href="dmca.html">DMCA</a>
+<!-- Menu Lateral -->
+<div id="sideMenu" class="side-menu">
+    <div style="padding: 30px 20px; text-align: center; background: #0b5ed7; color: white; margin-bottom: 10px;">
+        <span class="close-btn" onclick="toggleMenu(false)">&times;</span>
+        <h3>PA VAGAS MZ</h3>
+    </div>
+    <a href="index.html"><i class="fas fa-home"></i> Página Inicial</a>
+    <a href="enviar-vaga.html"><i class="fas fa-paper-plane"></i> Enviar Vaga</a>
+    <a href="contacto.html"><i class="fas fa-phone"></i> Contacto</a>
+    <a href="politica.html"><i class="fas fa-user-shield"></i> Política de Privacidade</a>
+    <a href="dmca.html"><i class="fas fa-copyright"></i> DMCA</a>
 </div>
 
 <header>
-    <div class="menu-btn" onclick="document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active');"><i class="fas fa-bars"></i></div>
-    <div>PA VAGAS MZ</div>
+    <div onclick="toggleMenu(true)" style="cursor:pointer; color: white;"><i class="fas fa-bars fa-2x"></i></div>
+    <h2 style="font-size: 1.2rem;">PA VAGAS MZ</h2>
+    <div></div>
 </header>
 
 <div class="container">
-    <div id="conteudoVaga" class="vaga-detalhe-card">Carregando detalhes...</div>
+    <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Voltar à lista de vagas</button>
+    
+    <div id="status" class="loader"></div>
+    <div id="conteudoVaga" class="vaga-detalhe-card" style="display:none;"></div>
     
     <div class="banner-whatsapp">
-        <p><i class="fab fa-whatsapp"></i> Receba Novas Vagas no teu WhatsApp</p>
+        <p><i class="fab fa-whatsapp" style="font-size: 20px; margin-right: 8px;"></i> Receba Novas Vagas Diariamente no WhatsApp</p>
         <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank">Aceder ao Canal Oficial</a>
     </div>
 
-    <h3 style="margin-top:30px;">Outras Oportunidades</h3>
+    <h3 style="margin-top:40px; color: var(--text);">Outras Oportunidades Recentes</h3>
     <div id="listaSugestoes" class="grid-outras"></div>
 </div>
 
+<!-- Rodapé -->
 <footer>
-    <div class="footer-redes">
-        <a href="https://www.facebook.com/profile.php?id=61591198577276" style="color:#1877f2;"><i class="fab fa-facebook"></i></a>
-        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a>
+    <div class="links">
+        <a href="index.html">Página Inicial</a> | <a href="contacto.html">Contacto</a> | <a href="politica.html">Política de Privacidade</a> | <a href="dmca.html">DMCA</a>
     </div>
-    <p>&copy; 2026 PA VAGAS MZ</p>
-    <div class="assinatura">Criado e Desenvolvido por Apolinário Lizete</div>
+    <div class="social" style="margin: 20px 0;">
+        <a href="https://www.facebook.com/profile.php?id=61591198577276"><i class="fab fa-facebook"></i></a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p"><i class="fab fa-whatsapp"></i></a>
+    </div>
+    <div class="assinatura">Criado e desenvolvido por Apolinário Lizete</div>
 </footer>
+
+<!-- Botão Flutuante -->
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" class="float-wa" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", authDomain: "empregosportal.firebaseapp.com", projectId: "empregosportal", storageBucket: "empregosportal.firebasestorage.app", messagingSenderId: "898227669228", appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" };
+    const firebaseConfig = { apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", projectId: "empregosportal", storageBucket: "empregosportal.firebasestorage.app", appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    document.getElementById('overlay').onclick = () => { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+    function toggleMenu(open) { document.getElementById("sideMenu").style.width = open ? "280px" : "0"; }
 
     const vagaId = new URLSearchParams(window.location.search).get('id');
 
     async function carregar() {
-        if(vagaId) {
-            const doc = await db.collection("vagas").doc(vagaId).get();
-            if(doc.exists) {
-                const v = doc.data();
-                document.getElementById('conteudoVaga').innerHTML = `
-                    ${v.imagem ? `<img src="${v.imagem}" class="vaga-main-img">` : ''}
-                    <h1>${v.titulo}</h1>
-                    <p><strong>Empresa:</strong> ${v.empresa}</p>
-                    <div class="grid-info">
-                        <div><small>Localização</small><br><strong>${v.provincia}</strong></div>
-                        <div><small>Salário</small><br><strong>${v.salario || 'A combinar'}</strong></div>
-                        <div><small>Válido até</small><br><strong>${v.prazo ? v.prazo.split('-').reverse().join('/') : 'Não informado'}</strong></div>
-                    </div>
-                    <p style="white-space:pre-line;">${v.descricao}</p>
-                    <a href="mailto:${v.email}?subject=Candidatura: ${v.titulo}" class="btn-candidatar"><i class="fas fa-envelope"></i> Enviar Candidatura</a>
-                    <button class="btn-partilhar" onclick="partilhar()"><i class="fas fa-share-alt"></i> Partilhar Vaga</button>
-                `;
-            }
+        if(!vagaId) {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('conteudoVaga').style.display = 'block';
+            document.getElementById('conteudoVaga').innerHTML = "<h3>Vaga não especificada.</h3><br><a href='index.html'>Voltar ao Início</a>";
+            return;
         }
         
-        // Carrega até 6 vagas
-        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(6).get();
+        try {
+            const doc = await db.collection("vagas").doc(vagaId).get();
+            document.getElementById('status').style.display = 'none';
+            const vagaCard = document.getElementById('conteudoVaga');
+            vagaCard.style.display = 'block';
+
+            if(doc.exists) {
+                const v = doc.data();
+                
+                // SEO Update
+                document.title = v.titulo + " | PA VAGAS MZ";
+                document.getElementById('og-title').content = v.titulo;
+                document.getElementById('og-desc').content = v.empresa + " - " + v.provincia;
+
+                // Lógica de botão
+                const botao = v.linkCandidatura 
+                    ? `<a href="${v.linkCandidatura}" target="_blank" class="btn-candidatar"><i class="fas fa-external-link-alt"></i> Candidatar-se Online</a>`
+                    : `<a href="mailto:${v.email}?subject=Candidatura: ${v.titulo}" class="btn-candidatar"><i class="fas fa-envelope"></i> Enviar Candidatura</a>`;
+
+                vagaCard.innerHTML = `
+                    ${v.imagem ? `<img src="${v.imagem}" class="vaga-main-img" alt="Imagem da Vaga">` : ''}
+                    <h1 class="vaga-titulo">${v.titulo}</h1>
+                    <p class="vaga-empresa"><i class="fas fa-building"></i> ${v.empresa}</p>
+                    
+                    <div class="grid-info">
+                        <div><small>Localização</small><br><strong><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> ${v.provincia}</strong></div>
+                        <div><small>Salário</small><br><strong>${v.salario || 'A combinar'}</strong></div>
+                        <div><small>Válido até</small><br><strong>${v.prazo ? v.prazo.split('-').reverse().join('/') : 'Não especificado'}</strong></div>
+                    </div>
+                    
+                    <div class="vaga-descricao">${v.descricao}</div>
+                    
+                    ${botao}
+                    <button class="btn-partilhar" onclick="partilharVaga('${v.titulo}')"><i class="fas fa-share-alt"></i> Partilhar com Amigos</button>
+                `;
+
+                // Injetar Google Schema
+                const script = document.createElement('script');
+                script.type = "application/ld+json";
+                script.text = JSON.stringify({
+                    "@context": "https://schema.org/",
+                    "@type": "JobPosting",
+                    "title": v.titulo,
+                    "hiringOrganization": { "@type": "Organization", "name": v.empresa },
+                    "description": v.descricao,
+                    "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressLocality": v.provincia, "addressCountry": "MZ" } }
+                });
+                document.head.appendChild(script);
+
+            } else {
+                vagaCard.innerHTML = "<h3>Lamentamos, esta vaga já não se encontra disponível ou o link é inválido.</h3><br><a href='index.html'>Procurar outras vagas</a>";
+            }
+            
+            carregarSugestoes();
+
+        } catch(e) {
+            document.getElementById('status').innerHTML = "Erro de conexão ao carregar a vaga.";
+        }
+    }
+
+    async function carregarSugestoes() {
+        const snapshot = await db.collection("vagas").orderBy("dataCriacao", "desc").limit(5).get();
         let html = '';
         snapshot.forEach(doc => {
             if(doc.id !== vagaId) {
                 const v = doc.data();
                 html += `
                     <div class="card-mini">
-                        <img src="${v.imagem || 'https://via.placeholder.com/150'}">
-                        <h4>${v.titulo}</h4>
-                        <a href="vaga.html?id=${doc.id}" class="btn-ver">Ver</a>
+                        <div>
+                            <h4>${v.titulo}</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> ${v.provincia}</p>
+                        </div>
+                        <a href="vaga.html?id=${doc.id}" class="btn-ver-mini">Ver Detalhes</a>
                     </div>
                 `;
             }
         });
-        document.getElementById('listaSugestoes').innerHTML = html;
+        document.getElementById('listaSugestoes').innerHTML = html || "<p>Sem outras vagas no momento.</p>";
     }
 
-    function partilhar() {
+    function partilharVaga(tituloVaga) {
         if (navigator.share) {
-            navigator.share({ title: document.title, url: window.location.href });
+            navigator.share({
+                title: tituloVaga + ' | PA VAGAS MZ',
+                text: 'Olha esta oportunidade de emprego no PA VAGAS MZ: ' + tituloVaga,
+                url: window.location.href
+            }).catch(console.error);
         } else {
             navigator.clipboard.writeText(window.location.href);
-            alert('Link copiado!');
+            alert('Link copiado para a área de transferência! Cole no WhatsApp para partilhar.');
         }
     }
+
     carregar();
 </script>
 
