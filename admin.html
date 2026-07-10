@@ -9,15 +9,18 @@
         :root { --primary: #0b5ed7; --danger: #dc3545; --bg: #f4f7f6; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: #333; padding: 20px; }
         .admin-container { max-width: 900px; margin: 0 auto; }
+        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary); }
         .stat-card h3 { color: #666; font-size: 11px; margin: 0; text-transform: uppercase; }
         .stat-card p { font-size: 24px; font-weight: 700; color: var(--primary); margin: 5px 0 0 0; }
+
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { color: var(--primary); margin-top: 0; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
         .btn-main { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
         .vaga-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
         .btn-del { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
     </style>
@@ -42,28 +45,36 @@
         </div>
 
         <div class="card">
-            <h3>Publicar Nova Vaga Completa</h3>
+            <h3>Publicar Nova Vaga</h3>
             <div class="form-row">
                 <input type="text" id="titulo" placeholder="Título da Vaga *">
                 <input type="text" id="empresa" placeholder="Empresa *">
             </div>
             <div class="form-row">
                 <select id="provincia">
-                    <option value="">Selecione a Província *</option>
-                    <option value="Maputo">Maputo</option>
-                    <option value="Beira">Beira</option>
+                    <option value="">Selecione a Província</option>
+                    <option value="Maputo Cidade">Maputo Cidade</option>
+                    <option value="Maputo Província">Maputo Província</option>
+                    <option value="Gaza">Gaza</option>
+                    <option value="Inhambane">Inhambane</option>
+                    <option value="Sofala">Sofala</option>
+                    <option value="Manica">Manica</option>
+                    <option value="Tete">Tete</option>
+                    <option value="Zambézia">Zambézia</option>
                     <option value="Nampula">Nampula</option>
+                    <option value="Niassa">Niassa</option>
+                    <option value="Cabo Delgado">Cabo Delgado</option>
                 </select>
-                <input type="text" id="localidade" placeholder="Localidade *">
+                <input type="text" id="localidade" placeholder="Localidade">
             </div>
             <div class="form-row">
-                <input type="text" id="salario" placeholder="Salário (Ex: 15.000 MT) *">
-                <input type="date" id="prazo" placeholder="Prazo *">
+                <input type="text" id="salario" placeholder="Salário">
+                <input type="date" id="prazo" placeholder="Prazo">
             </div>
-            <input type="email" id="emailVaga" placeholder="Email para envio de CV *">
+            <input type="email" id="emailVaga" placeholder="Email para envio de CV">
             <textarea id="desc" rows="3" placeholder="Descrição detalhada da vaga *"></textarea>
             
-            <label>Imagem (Upload ou Link) *</label>
+            <label>Imagem da Vaga (Obrigatório) *</label>
             <input type="file" id="fotoFicheiro" accept="image/*" onchange="verificarFicheiro(this)">
             <input type="text" id="fotoLink" placeholder="Ou cole o Link da imagem" oninput="verificarLink(this)">
             
@@ -101,12 +112,15 @@
     };
 
     window.publicarVaga = async () => {
-        const campos = ['titulo', 'empresa', 'provincia', 'localidade', 'salario', 'prazo', 'emailVaga', 'desc'];
-        for(let c of campos) { if(!document.getElementById(c).value) { alert("Preencha todos os campos!"); return; } }
-        
+        // Validação dos 4 campos obrigatórios
+        const titulo = document.getElementById('titulo').value;
+        const empresa = document.getElementById('empresa').value;
+        const desc = document.getElementById('desc').value;
         const fileInput = document.getElementById('fotoFicheiro');
         const linkInput = document.getElementById('fotoLink');
-        if (fileInput.files.length === 0 && !linkInput.value) { alert("É obrigatório uma imagem ou link!"); return; }
+
+        if(!titulo || !empresa || !desc) { alert("Título, Empresa e Descrição são obrigatórios!"); return; }
+        if(fileInput.files.length === 0 && !linkInput.value) { alert("Imagem é obrigatória!"); return; }
 
         const btn = document.getElementById('btnPublicar');
         btn.disabled = true; btn.innerText = "A Publicar...";
@@ -114,26 +128,30 @@
         let img = linkInput.value || "https://cdn-icons-png.flaticon.com/512/2986/2986323.png";
         if (fileInput.files.length > 0) {
             img = await processarImagem(fileInput.files[0]);
-            if(!img) { alert("Erro na imagem."); btn.disabled = false; return; }
+            if(!img) { alert("Erro na imagem."); btn.disabled = false; btn.innerText = "Publicar Vaga"; return; }
         }
 
         try {
-            await setDoc(doc(db, "vagas", titulo.value.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now()), {
-                titulo: document.getElementById('titulo').value,
-                empresa: document.getElementById('empresa').value,
-                provincia: document.getElementById('provincia').value,
-                localidade: document.getElementById('localidade').value,
-                salario: document.getElementById('salario').value,
-                prazo: document.getElementById('prazo').value,
-                email: document.getElementById('emailVaga').value,
-                descricao: document.getElementById('desc').value,
+            await setDoc(doc(db, "vagas", titulo.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now()), {
+                titulo: titulo,
+                empresa: empresa,
+                provincia: document.getElementById('provincia').value || "Não especificada",
+                localidade: document.getElementById('localidade').value || "Não especificada",
+                salario: document.getElementById('salario').value || "Não especificado",
+                prazo: document.getElementById('prazo').value || "Indeterminado",
+                email: document.getElementById('emailVaga').value || "Sem email",
+                descricao: desc,
                 imagem: img,
                 views: 0,
                 dataCriacao: serverTimestamp()
             });
             alert("Publicado com sucesso!");
+            // Limpa apenas campos de texto principais
+            document.getElementById('titulo').value = "";
+            document.getElementById('empresa').value = "";
+            document.getElementById('desc').value = "";
             btn.disabled = false; btn.innerText = "Publicar Vaga";
-        } catch (e) { alert("Erro: " + e.message); btn.disabled = false; }
+        } catch (e) { alert("Erro: " + e.message); btn.disabled = false; btn.innerText = "Publicar Vaga"; }
     };
 
     function iniciarMonitoramento() {
