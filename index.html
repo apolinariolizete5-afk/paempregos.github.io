@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO & OPEN GRAPH -->
     <title>PA VAGAS MZ | Empregos e Oportunidades em Moçambique</title>
     <meta name="description" content="O maior portal de empregos de Moçambique. Encontre vagas de emprego, estágios e oportunidades diariamente.">
     <meta property="og:title" content="PA VAGAS MZ | Empregos em Moçambique">
-    <meta property="og:description" content="Encontre a sua próxima oportunidade de carreira em Moçambique.">
-    <meta property="og:type" content="website">
     <meta property="og:image" content="https://i.imgur.com/your-logo.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -17,18 +14,18 @@
     <style>
         :root { --primary: #0b5ed7; --bg: #f4f7f6; --text: #333; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
         
         /* Menu Lateral */
-        .side-menu { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 0; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
-        .side-menu a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: var(--text); display: block; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .side-menu { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 0; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
+        .side-menu a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: var(--text); display: block; display: flex; align-items: center; gap: 10px; }
         .side-menu a:hover { color: var(--primary); background: #f0f0f0; }
         .close-btn { position: absolute; top: 20px; right: 25px; font-size: 30px; cursor: pointer; color: white; }
 
         /* Estilo Geral */
         header { background: var(--primary); color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 999; }
         .hero { background: linear-gradient(135deg, #0b5ed7, #4e9cff); color: white; padding: 40px 20px; text-align: center; }
-        .container { max-width: 1000px; margin: auto; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; padding: 20px; min-height: 50vh; }
         
         .search-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: -50px; display: grid; gap: 10px; grid-template-columns: 1fr 1fr auto; }
         input, select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; }
@@ -38,18 +35,23 @@
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .btn-ver { display: block; background: var(--primary); color: white; text-align: center; padding: 10px; border-radius: 8px; margin-top: 15px; text-decoration: none; }
         
+        /* Rodapé */
+        footer { background: #fff; padding: 30px 20px; text-align: center; border-top: 1px solid #eee; margin-top: 40px; }
+        footer .links a { margin: 0 10px; color: #555; text-decoration: none; font-size: 0.9rem; }
+        footer .social a { font-size: 1.2rem; margin: 0 10px; color: #333; }
+        .assinatura { font-size: 0.7rem; color: #888; margin-top: 15px; text-transform: uppercase; }
+
+        /* Loader & Buttons */
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         .btn-load-more { background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: block; margin: 20px auto; }
         
-        /* Mobile adjustment */
+        /* Mobile */
         @media (max-width: 600px) { .search-box { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<!-- Menu Lateral Completo -->
 <div id="sideMenu" class="side-menu">
     <div style="padding: 30px 20px; text-align: center; background: #0b5ed7; color: white; margin-bottom: 10px;">
         <span class="close-btn" onclick="toggleMenu(false)">&times;</span>
@@ -60,10 +62,6 @@
     <a href="contacto.html"><i class="fas fa-phone"></i> Contacto</a>
     <a href="politica.html"><i class="fas fa-user-shield"></i> Política de Privacidade</a>
     <a href="dmca.html"><i class="fas fa-copyright"></i> DMCA</a>
-    <hr style="margin: 10px 20px;">
-    <a href="admin.html" style="color: #0b5ed7; font-weight: bold;"><i class="fas fa-user-shield"></i> Painel Admin</a>
-    <a href="https://www.facebook.com/profile.php?id=61591198577276" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-    <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank"><i class="fab fa-whatsapp"></i> Canal WhatsApp</a>
 </div>
 
 <header>
@@ -74,7 +72,6 @@
 
 <div class="hero">
     <h1>Encontre o seu emprego ideal</h1>
-    <p>O seu futuro começa aqui</p>
 </div>
 
 <div class="container">
@@ -95,49 +92,48 @@
     <button id="btnMais" class="btn-load-more" style="display:none;" onclick="carregarVagas()">Carregar Mais Vagas</button>
 </div>
 
-<!-- Cookies -->
-<div id="cookie-bar" style="position:fixed; bottom:0; width:100%; background:#222; color:white; padding:15px; text-align:center; z-index:900; display:none;">
-    Usamos cookies para melhorar a experiência. <button onclick="aceitarCookies()">OK</button>
-</div>
+<!-- Footer -->
+<footer>
+    <div class="links">
+        <a href="index.html">Página Inicial</a> | <a href="contacto.html">Contacto</a> | <a href="politica.html">Política de Privacidade</a> | <a href="dmca.html">DMCA</a>
+    </div>
+    <div class="social" style="margin: 15px 0;">
+        <a href="https://www.facebook.com/profile.php?id=61591198577276"><i class="fab fa-facebook"></i></a>
+        <a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p"><i class="fab fa-whatsapp"></i></a>
+    </div>
+    <div class="assinatura">Criado e desenvolvido por Apolinário Lizete</div>
+</footer>
 
-<!-- Firebase -->
+<!-- Botão Flutuante WhatsApp -->
+<a href="https://whatsapp.com/channel/0029VbDLGxu4SpkOM6UG7S3p" target="_blank" style="position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px 18px; border-radius: 50px; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000;">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Scripts -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", 
-        projectId: "empregosportal", 
-        storageBucket: "empregosportal.firebasestorage.app", 
-        appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" 
-    };
+    const firebaseConfig = { apiKey: "AIzaSyAMI9bD8EhVVS8Xp9rlvhPWg4hS3PBUH2A", projectId: "empregosportal", storageBucket: "empregosportal.firebasestorage.app", appId: "1:898227669228:web:9c12c501bd2e9c73e1bdc9" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     let lastVisible = null;
-    const listaDiv = document.getElementById('listaVagas');
-
     function toggleMenu(open) { document.getElementById("sideMenu").style.width = open ? "280px" : "0"; }
 
     async function carregarVagas() {
         document.getElementById('status').style.display = 'block';
         let query = db.collection("vagas").orderBy("dataCriacao", "desc").limit(10);
-        
         if (lastVisible) query = query.startAfter(lastVisible);
-
+        
         try {
             const snap = await query.get();
             document.getElementById('status').style.display = 'none';
-
-            if (snap.empty) { 
-                document.getElementById('btnMais').style.display = 'none'; 
-                return; 
-            }
-            
+            if (snap.empty) { document.getElementById('btnMais').style.display = 'none'; return; }
             lastVisible = snap.docs[snap.docs.length - 1];
             snap.forEach(doc => {
                 const v = doc.data();
-                listaDiv.innerHTML += `
+                document.getElementById('listaVagas').innerHTML += `
                     <div class="card">
                         <h3>${v.titulo}</h3>
                         <p><strong>${v.empresa}</strong></p>
@@ -147,18 +143,8 @@
                 `;
             });
             document.getElementById('btnMais').style.display = 'block';
-        } catch(e) {
-            document.getElementById('status').innerHTML = "Erro ao carregar.";
-        }
+        } catch(e) { document.getElementById('status').innerHTML = "Erro ao carregar."; }
     }
-
-    document.getElementById('btnPesquisar').onclick = () => {
-        alert("Para pesquisar, recomendamos a criação de uma página específica de resultados ou filtro avançado.");
-    };
-
-    function aceitarCookies() { document.getElementById('cookie-bar').style.display = 'none'; localStorage.setItem('cookie', 'aceite'); }
-    if(!localStorage.getItem('cookie')) document.getElementById('cookie-bar').style.display = 'block';
-
     carregarVagas();
 </script>
 </body>
