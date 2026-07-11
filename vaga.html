@@ -155,21 +155,19 @@
 
             if(doc.exists) {
                 const v = doc.data();
-    if(doc.exists) {
-    const v = doc.data();
-    
-    // Pegar a data de hoje no formato ANO-MÊS-DIA (ex: 2026-07-10)
-    const hojeStr = new Date().toLocaleDateString('sv-SE');
-    
-    // Atualiza o total e guarda a vista na data de hoje
-    db.collection("vagas").doc(vagaId).update({
-        views: firebase.firestore.FieldValue.increment(1),
-        ["dailyViews." + hojeStr]: firebase.firestore.FieldValue.increment(1)
-    });
-    
-    // SEO Update (O seu código continua igual abaixo)
-    document.title = v.titulo + " | PA VAGAS MZ";
-
+                
+                // Pegar a data de hoje no formato ANO-MÊS-DIA (ex: 2026-07-10)
+                const hojeStr = new Date().toLocaleDateString('sv-SE');
+                
+                // Atualiza o total e guarda a vista na data de hoje de forma segura
+                try {
+                    await db.collection("vagas").doc(vagaId).update({
+                        views: firebase.firestore.FieldValue.increment(1),
+                        ["dailyViews." + hojeStr]: firebase.firestore.FieldValue.increment(1)
+                    });
+                } catch(err) {
+                    console.error("Erro ao computar visualização:", err);
+                }
                 
                 // SEO Update
                 document.title = v.titulo + " | PA VAGAS MZ";
