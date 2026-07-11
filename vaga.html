@@ -149,25 +149,19 @@
         
         try {
             const doc = await db.collection("vagas").doc(vagaId).get();
-            document.getElementById('status').style.display = 'none';
             const vagaCard = document.getElementById('conteudoVaga');
-            vagaCard.style.display = 'block';
 
             if(doc.exists) {
                 const v = doc.data();
                 
-                // Pegar a data de hoje no formato ANO-MÊS-DIA (ex: 2026-07-10)
+                // Pegar a data de hoje no formato ANO-MÊS-DIA (ex: 2026-07-11)
                 const hojeStr = new Date().toLocaleDateString('sv-SE');
                 
-                // Atualiza o total e guarda a vista na data de hoje de forma segura
-                try {
-                    await db.collection("vagas").doc(vagaId).update({
-                        views: firebase.firestore.FieldValue.increment(1),
-                        ["dailyViews." + hojeStr]: firebase.firestore.FieldValue.increment(1)
-                    });
-                } catch(err) {
-                    console.error("Erro ao computar visualização:", err);
-                }
+                // Atualiza o contador de visualizações de forma assíncrona (sem travar ou atrasar a tela)
+                db.collection("vagas").doc(vagaId).update({
+                    views: firebase.firestore.FieldValue.increment(1),
+                    ["dailyViews." + hojeStr]: firebase.firestore.FieldValue.increment(1)
+                }).catch(err => console.error("Erro ao processar métricas de views:", err));
                 
                 // SEO Update
                 document.title = v.titulo + " | PA VAGAS MZ";
@@ -179,6 +173,7 @@
                     ? `<a href="${v.linkCandidatura}" target="_blank" class="btn-candidatar"><i class="fas fa-external-link-alt"></i> Candidatar-se Online</a>`
                     : `<a href="mailto:${v.email}?subject=Candidatura: ${v.titulo}" class="btn-candidatar"><i class="fas fa-envelope"></i> Enviar Candidatura</a>`;
 
+                // Montar o conteúdo completo estruturado primeiro na memória
                 vagaCard.innerHTML = `
                     ${v.imagem ? `<img src="${v.imagem}" class="vaga-main-img" alt="Imagem da Vaga">` : ''}
                     <h1 class="vaga-titulo">${v.titulo}</h1>
@@ -196,6 +191,10 @@
                     <button class="btn-partilhar" onclick="partilharVaga('${v.titulo}')"><i class="fas fa-share-alt"></i> Partilhar com Amigos</button>
                 `;
 
+                // APENAS AGORA removemos o loader e exibimos o card com tudo carregado!
+                document.getElementById('status').style.display = 'none';
+                vagaCard.style.display = 'block';
+
                 // Injetar Google Schema
                 const script = document.createElement('script');
                 script.type = "application/ld+json";
@@ -210,6 +209,8 @@
                 document.head.appendChild(script);
 
             } else {
+                document.getElementById('status').style.display = 'none';
+                vagaCard.style.display = 'block';
                 vagaCard.innerHTML = "<h3>Lamentamos, esta vaga já não se encontra disponível ou o link é inválido.</h3><br><a href='index.html'>Procurar outras vagas</a>";
             }
             
